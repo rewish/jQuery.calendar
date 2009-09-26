@@ -1,12 +1,22 @@
+/**
+ * jQuery.calendar
+ *
+ * @version  0
+ * @author   rew <rewish.org@gmail.com>
+ * @link     http://rewish.org/
+ * @license  http://rewish.org/license/mit The MIT License
+ */
 (function($) {
 
 	$.fn.calendar = function(option) {
-		$.calendar($.extend({
-			object: $(this)
-		}, option));
+		$.calendar(this, option);
 	};
 
-	var $c = $.calendar = function(option) {
+	var $c = $.calendar = function(elem, option) {
+		$.calendar.elem = elem;
+		if ($.calendar.count == 0) {
+			$.calendar.init();
+		}
 		$.calendar
 			.setOption(option)
 			.create()
@@ -15,9 +25,25 @@
 		;
 	};
 
+	$c.count = 0;
+
 	$c.dayName = [
 		'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'
 	];
+
+	$c.init = function() {
+		$c.title = $('<div />');
+		$c.elem.find('table')
+			.before($c.title)
+			.before(
+				$('<ul />').html([
+					'<li><a href="javascript:jQuery.calendar.move(\'prev\')">Prev</a>',
+					'<li><a href="javascript:jQuery.calendar.move(\'next\')">Next</a>'
+				].join(''))
+			)
+		;
+		$c.count++;
+	};
 
 	$c.setOption = function(option) {
 		var date = new Date;
@@ -25,7 +51,6 @@
 			year  : date.getFullYear(),
 			month : date.getMonth() + 1,
 			day   : date.getDate(),
-			object: $('#calendar'),
 			events: [],
 			callback: $c.callback
 		}, option);
@@ -33,6 +58,7 @@
 	};
 
 	$c.create = function() {
+		$c.view = {};
 		$c.prevFill();
 		var
 			current = new Date($c.option.year, $c.option.month - 1, 1),
@@ -49,8 +75,10 @@
 	$c.prevFill = function() {
 		var
 			prev = new Date($c.option.year, $c.option.month - 1, 0),
-			prevLast = prev.getDate();
-		for (var day = prevLast - prev.getDay(); day <= prevLast; day++) {
+			last = prev.getDate(),
+			day  = last - prev.getDay();
+		if (last - day >= 6) return this;
+		for (; day <= last; day++) {
 			prev.setDate(day);
 			$c.add(prev, 'otherMonth');
 		}
@@ -60,16 +88,15 @@
 	$c.nextFill = function() {
 		var
 			next = new Date($c.option.year, $c.option.month, 1),
-			nextLast = 7 - next.getDay();
-		if (nextLast == 7) return this;
-		for (var day = 1; day <= nextLast; day++) {
+			last = 7 - next.getDay();
+		if (last >= 7) return this;
+		for (var day = 1; day <= last; day++) {
 			next.setDate(day);
 			$c.add(next, 'otherMonth');
 		}
 		return this;
 	};
 
-	$c.view = {};
 	$c.td   = $('<td />');
 	$c.add  = function(date, className) {
 		return $c.view[$c.getKey(date)] = $c.td.clone()
@@ -112,7 +139,7 @@
 	$c.tr = $('<tr />');
 	$c.show = function() {
 		var
-			tbody = $('tbody', $c.option.object),
+			tbody = $('tbody', $c.elem),
 			tr,
 			count = 0;
 		$.each($c.view, function() {
@@ -123,7 +150,19 @@
 			tr.append(this);
 			count++;
 		});
+
+		var now = new Date($c.option.year, $c.option.month - 1, $c.option.day);
+		$c.title.text($c.getKey(now).slice(0, 7));
+
 		return this;
+	};
+
+	$c.move = function(type) {
+		$c.option.month = type == 'prev'
+		                ? --$c.option.month
+		                : ++$c.option.month;
+		$('tbody', $c.elem).empty();
+		$c($c.elem, $c.option);
 	};
 
 })(jQuery);
