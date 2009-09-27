@@ -14,10 +14,8 @@
 
 	var $c = $.calendar = function(elem, option) {
 		$.calendar.elem = elem;
-		if ($.calendar.count == 0) {
-			$.calendar.init();
-		}
 		$.calendar
+			.init()
 			.setOption(option)
 			.create()
 			.addEvent()
@@ -25,24 +23,28 @@
 		;
 	};
 
-	$c.count = 0;
-
 	$c.dayName = [
 		'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'
 	];
 
-	$c.init = function() {
+	$c.ready = false;
+	$c.init  = function() {
+		if ($.calendar.ready) {
+			return this;
+		}
 		$c.title = $('<div />');
+		var link = '<a href="javascript:jQuery.calendar.move(\'%s\')">%s</a>';
 		$c.elem.find('table')
 			.before($c.title)
 			.before(
 				$('<ul />').html([
-					'<li><a href="javascript:jQuery.calendar.move(\'prev\')">Prev</a>',
-					'<li><a href="javascript:jQuery.calendar.move(\'next\')">Next</a>'
+					'<li>', link.replace(/%s/g, 'Prev'), '</li>',
+					'<li>', link.replace(/%s/g, 'Next'), '</li>'
 				].join(''))
 			)
 		;
-		$c.count++;
+		$c.ready = true;
+		return this;
 	};
 
 	$c.setOption = function(option) {
@@ -58,6 +60,7 @@
 	};
 
 	$c.create = function() {
+		$('tbody', $c.elem).empty();
 		$c.view = {};
 		$c.prevFill();
 		var
@@ -158,10 +161,9 @@
 	};
 
 	$c.move = function(type) {
-		$c.option.month = type == 'prev'
+		$c.option.month = type == 'Prev'
 		                ? --$c.option.month
 		                : ++$c.option.month;
-		$('tbody', $c.elem).empty();
 		$c($c.elem, $c.option);
 	};
 
