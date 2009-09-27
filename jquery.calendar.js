@@ -1,7 +1,7 @@
 /**
  * jQuery.calendar
  *
- * @version  0
+ * @version  0.1-dev
  * @author   rew <rewish.org@gmail.com>
  * @link     http://rewish.org/
  * @license  http://rewish.org/license/mit The MIT License
@@ -23,9 +23,7 @@
 		;
 	};
 
-	$c.dayName = [
-		'sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'
-	];
+	$c.dayName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 	$c.ready = false;
 	$c.init  = function() {
@@ -100,8 +98,8 @@
 		return this;
 	};
 
-	$c.td   = $('<td />');
-	$c.add  = function(date, className) {
+	$c.td  = $('<td />');
+	$c.add = function(date, className) {
 		return $c.view[$c.getKey(date)] = $c.td.clone()
 			.addClass($c.dayName[date.getDay()])
 			.addClass(className)
@@ -153,10 +151,9 @@
 			tr.append(this);
 			count++;
 		});
-
-		var now = new Date($c.option.year, $c.option.month - 1, $c.option.day);
-		$c.title.text($c.getKey(now).slice(0, 7));
-
+		$c.title.text($c.getKey(
+			new Date($c.option.year, $c.option.month - 1, $c.option.day)
+		).slice(0, 7));
 		return this;
 	};
 
