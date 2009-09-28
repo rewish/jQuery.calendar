@@ -7,22 +7,39 @@
 	<script type="text/javascript" src="jquery.calendar.js"></script>
 	<script type="text/javascript">
 jQuery(document).ready(function($) {
+	// カレンダーは一個しか作れない。
+
+	// 2009年9月のカレンダーを表示。
 	$('#calendar').calendar({
+		lang: 'ja',
 		year: 2009,
-		month: 10,
+		month: 9,
+		// dateのみ必須。DateオブジェクトのインスタンスかYYYY-MM-DD形式の文字列。
+		// callback関数を指定するなら、date以外は好きなものを渡して適当に使う。
 		events: [
 			{
-				id   : 1,
-				date : '2009-10-6',
+				date : '2009-9-6',
+				title: 'イベント1',
 				url  : 'javascript:void(0)'
 			},
 			{
-				date : '2009-10-8'
+				date : '2009-09-06',
+				title: 'イベント2'
 			},
 			{
-				date : '2009-10-09'
+				date : new Date(2009, 8, 12),
+				title: 'イベント3'
 			}
-		]
+		],
+		eventCallback: function(td, evt) {
+			if (typeof evt.url != 'undefined') {
+				var e = $('<a />').attr('href', evt.url);
+			} else {
+				var e = $('<span />');
+			}
+			e.text(evt.title);
+			td.append(e).addClass('event');
+		}
 	});
 });
 	</script>
