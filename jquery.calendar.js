@@ -113,19 +113,22 @@
 	};
 
 	$c.getKey = function(date) {
+		if (typeof date == 'string') {
+			date = date.split('-');
+		}
 		return [
-			date.getFullYear(),
-			('0' + (date.getMonth() + 1)).slice(-2),
-			('0' + (date.getDate())).slice(-2)
+			date[0] || date.getFullYear(),
+			('0' + (date[1] || date.getMonth() + 1)).slice(-2),
+			('0' + (date[2] || date.getDate())).slice(-2)
 		].join('-')
 	};
 
 	$c.addEvent = function() {
 		$.each($c.option.events, function() {
-			if (typeof $c.view[this.date] == 'undefined') {
+			var td = $c.view[$c.getKey(this.date)];
+			if (typeof td == 'undefined') {
 				return;
 			}
-			var td = $c.view[this.date];
 			if (td.attr('class').match('otherMonth')) {
 				return;
 			}
