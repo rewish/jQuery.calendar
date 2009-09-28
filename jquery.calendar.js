@@ -76,10 +76,12 @@
 			format = '<a href="javascript:jQuery.calendar.move(\'%s\')">%s</a>',
 			text   = $c.option.navi[$c.option.lang];
 		$c.elem.append(
-			$('<ul />').html([
-				'<li>', format.replace('%s', 'Prev').replace('%s', text[0]), '</li>',
-				'<li>', format.replace('%s', 'Next').replace('%s', text[1]), '</li>'
-			].join(''))
+			$('<ul />')
+				.addClass('moveNavi')
+				.html([
+					'<li>', format.replace(/%s/g, text[0]), '</li>',
+					'<li>', format.replace(/%s/g, text[1]), '</li>'
+				].join(''))
 		);
 	};
 
@@ -95,8 +97,10 @@
 		}
 		$c.elem.append(
 			$('<table />')
-				.append($('<thead />')
-					.append($c.tr.clone().html(week.join('')))
+				.addClass('calendar')
+				.append(
+					$('<thead />')
+						.append($c.tr.clone().html(week.join('')))
 				)
 				.append($c.tbody)
 		);
@@ -196,10 +200,14 @@
 	};
 
 	$c.move = function(type) {
-		$c.option.month
-			= type == 'Prev' ? --$c.option.month
-			: type == 'Next' ? ++$c.option.month
-			: $c.option.month;
+		switch (type) {
+			case $c.option.navi[$c.option.lang][0]:
+				$c.option.month--;
+				break;
+			case $c.option.navi[$c.option.lang][1]:
+				$c.option.month++;
+				break;
+		}
 		$c.option.callback.move($c.elem, $c.option);
 	};
 
