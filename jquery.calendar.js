@@ -47,6 +47,9 @@
 	};
 
 	$c.setOption = function(option) {
+		if ($c.option && !option) {
+			return this;
+		}
 		$c.option = $.extend({
 			lang  : 'ja',
 			year  : $c.today.getFullYear(),
@@ -208,7 +211,7 @@
 				$c.option.month++;
 				break;
 		}
-		$c.option.callback.move($c.elem, $c.option);
+		$c.option.callback.move($c.elem);
 	};
 
 	$c.callback = {
@@ -222,8 +225,8 @@
 			e.text(td.text());
 			td.text('').append(e).addClass('event');
 		},
-		move: function(elem, option) {
-			$c(elem, option);
+		move: function(elem) {
+			$c(elem);
 		}
 	};
 
