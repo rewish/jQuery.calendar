@@ -23,21 +23,27 @@
 		;
 	};
 
-	$c.dayName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-
+	$c.dayName  = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+	$c.moveLink = '<a href="javascript:jQuery.calendar.move(\'%s\')">%s</a>';
+	$c.today = new Date;
 	$c.ready = false;
-	$c.init  = function() {
-		if ($.calendar.ready) {
+	$c.title;
+	$c.current;
+	$c.view;
+	$c.tr = $('<tr />');
+	$c.td = $('<td />');
+
+	$c.init = function() {
+		if ($c.ready) {
 			return this;
 		}
-		$c.title = $('<div />');
-		var link = '<a href="javascript:jQuery.calendar.move(\'%s\')">%s</a>';
+		$c.title = $('<div />').addClass('title');
 		$c.elem.find('table')
 			.before($c.title)
 			.before(
 				$('<ul />').html([
-					'<li>', link.replace(/%s/g, 'Prev'), '</li>',
-					'<li>', link.replace(/%s/g, 'Next'), '</li>'
+					'<li>', $c.moveLink.replace(/%s/g, 'Prev'), '</li>',
+					'<li>', $c.moveLink.replace(/%s/g, 'Next'), '</li>'
 				].join(''))
 			)
 		;
@@ -46,11 +52,10 @@
 	};
 
 	$c.setOption = function(option) {
-		var date = new Date;
 		$c.option = $.extend({
-			year  : date.getFullYear(),
-			month : date.getMonth() + 1,
-			day   : date.getDate(),
+			year  : $c.today.getFullYear(),
+			month : $c.today.getMonth() + 1,
+			day   : $c.today.getDate(),
 			events: [],
 			callback: $c.callback
 		}, option);
@@ -61,13 +66,12 @@
 		$('tbody', $c.elem).empty();
 		$c.view = {};
 		$c.prevFill();
-		var
-			current = new Date($c.option.year, $c.option.month - 1, 1),
-			last = new Date($c.option.year, $c.option.month, 0).getDate();
+		$c.current = new Date($c.option.year, $c.option.month - 1, 1);
+		var last = new Date($c.option.year, $c.option.month, 0).getDate();
 		for (var day = 1; day <= last; day++) {
-			current.setDate(day);
-			$c.add(current, 'currentMonth')
-				.attr('id', ['calendar', $c.getKey(current)].join('-'));
+			$c.current.setDate(day);
+			$c.add($c.current, 'currentMonth')
+				.attr('id', ['calendar', $c.getKey($c.current)].join('-'));
 		}
 		$c.nextFill();
 		return this;
@@ -98,7 +102,6 @@
 		return this;
 	};
 
-	$c.td  = $('<td />');
 	$c.add = function(date, className) {
 		return $c.view[$c.getKey(date)] = $c.td.clone()
 			.addClass($c.dayName[date.getDay()])
@@ -137,23 +140,23 @@
 		td.text('').append(event).addClass('event');
 	};
 
-	$c.tr = $('<tr />');
 	$c.show = function() {
 		var
+			today = $c.getKey($c.today),
 			tbody = $('tbody', $c.elem),
-			tr,
-			count = 0;
-		$.each($c.view, function() {
+			tr, count = 0;
+		$c.title.text($c.getKey($c.current).slice(0, 7));
+		$.each($c.view, function(key) {
 			if (count % 7 == 0 || count == 0) {
 				tr = $c.tr.clone();
 				tbody.append(tr);
 			}
+			if (key == today && !this.attr('class').match('otherMonth')) {
+				this.addClass('today');
+			}
 			tr.append(this);
 			count++;
 		});
-		$c.title.text($c.getKey(
-			new Date($c.option.year, $c.option.month - 1, $c.option.day)
-		).slice(0, 7));
 		return this;
 	};
 
