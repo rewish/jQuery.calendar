@@ -60,10 +60,8 @@
 			},
 			title : true,
 			events: [],
-			callback: {
-				event: $c.callback.event,
-				move : $c.callback.move
-			}
+			eventCallback: $c.callback.event,
+			moveCallback : $c.callback.move
 		}, option);
 		return this;
 	};
@@ -175,7 +173,7 @@
 			if (td.attr('class').match('otherMonth')) {
 				return;
 			}
-			$c.option.callback.event(td, this);
+			$c.option.eventCallback(td, this);
 		});
 		return this;
 	};
@@ -210,7 +208,7 @@
 				$c.option.month++;
 				break;
 		}
-		$c.option.callback.move($c.elem, $c.option);
+		$c.option.moveCallback($c.elem, $c.option);
 	};
 
 	$c.callback = {
