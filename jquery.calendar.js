@@ -15,8 +15,7 @@
 	var $c = $.calendar = function(elem, option) {
 		$.calendar.elem = elem;
 		$.calendar
-			.init()
-			.setOption(option)
+			.init(option)
 			.create()
 			.addEvent()
 			.show()
@@ -33,7 +32,8 @@
 	$c.tr = $('<tr />');
 	$c.td = $('<td />');
 
-	$c.init = function() {
+	$c.init = function(option) {
+		$c.setOption(option);
 		if ($c.ready) {
 			return this;
 		}
@@ -57,7 +57,10 @@
 			month : $c.today.getMonth() + 1,
 			day   : $c.today.getDate(),
 			events: [],
-			callback: $c.callback
+			callback: {
+				event: $c.callback.event,
+				move : $c.callback.move
+			}
 		}, option);
 		return this;
 	};
@@ -126,18 +129,9 @@
 			if (td.attr('class').match('otherMonth')) {
 				return;
 			}
-			$c.option.callback(td, this);
+			$c.option.callback.event(td, this);
 		});
 		return this;
-	};
-
-	$c.callback = function(td, evt) {
-		var event = evt.url ? $('<a />').attr('href', evt.url) : $('<span />');
-		if (evt.id) {
-			event.attr('id', 'event-' + evt.id);
-		}
-		event.text(td.text());
-		td.text('').append(event).addClass('event');
 	};
 
 	$c.show = function() {
@@ -161,10 +155,27 @@
 	};
 
 	$c.move = function(type) {
-		$c.option.month = type == 'Prev'
-		                ? --$c.option.month
-		                : ++$c.option.month;
-		$c($c.elem, $c.option);
+		$c.option.month
+			= type == 'Prev' ? --$c.option.month
+			: type == 'Next' ? ++$c.option.month
+			: $c.option.month;
+		$c.option.callback.move($c.elem, $c.option);
+	};
+
+	$c.callback = {
+		event: function(td, evt) {
+			var e = typeof evt.url != 'undefined'
+				? $('<a />').attr('href', evt.url)
+				: $('<span />');
+			if (evt.id) {
+				e.attr('id', 'event-' + evt.id);
+			}
+			e.text(td.text());
+			td.text('').append(e).addClass('event');
+		},
+		move: function(elem, option) {
+			$c(elem, option);
+		}
 	};
 
 })(jQuery);
