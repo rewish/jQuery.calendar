@@ -54,7 +54,6 @@
 			lang  : 'ja',
 			year  : $c.today.getFullYear(),
 			month : $c.today.getMonth() + 1,
-			day   : $c.today.getDate(),
 			navi  : {
 				en: ['Prev', 'Next'],
 				ja: ['\u524d\u306e\u6708', '\u6b21\u306e\u6708']
