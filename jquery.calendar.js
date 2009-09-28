@@ -79,8 +79,8 @@
 			$('<ul />')
 				.addClass('moveNavi')
 				.html([
-					'<li>', format.replace(/%s/g, text[0]), '</li>',
-					'<li>', format.replace(/%s/g, text[1]), '</li>'
+					'<li class="prev">', format.replace(/%s/g, text[0]), '</li>',
+					'<li class="next">', format.replace(/%s/g, text[1]), '</li>'
 				].join(''))
 		);
 	};

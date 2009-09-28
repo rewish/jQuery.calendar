@@ -27,6 +27,40 @@ jQuery(document).ready(function($) {
 });
 	</script>
 <style type="text/css">
+#calendar {
+	position: relative;
+	width: 602px;
+}
+
+div.title {
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: -1;
+	width: 602px;
+	text-align: center;
+}
+
+ul.moveNavi {
+	margin: 0 0 10px;
+	padding: 0 5px;
+	list-style: none;
+	overflow: hidden;
+	zoom: 1;
+}
+
+ul.moveNavi li.prev {
+	float: left;
+}
+
+ul.moveNavi li.next {
+	float: right;
+}
+
+table {
+	width: 602px;
+}
+
 th,
 td {
 	width: 80px;
