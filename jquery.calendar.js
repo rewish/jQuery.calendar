@@ -22,40 +22,41 @@
 		;
 	};
 
-	$c.dayName  = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-	$c.moveLink = '<a href="javascript:jQuery.calendar.move(\'%s\')">%s</a>';
-	$c.today = new Date;
 	$c.ready = false;
-	$c.title;
-	$c.current;
-	$c.view;
-	$c.tr = $('<tr />');
-	$c.td = $('<td />');
+	$c.today = new Date;
+	$c.weekDay = {
+		name: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+		en  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+		ja  : ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
+	};
 
 	$c.init = function(option) {
 		$c.setOption(option);
 		if ($c.ready) {
 			return this;
 		}
-		$c.title = $('<div />').addClass('title');
-		$c.elem.find('table')
-			.before($c.title)
-			.before(
-				$('<ul />').html([
-					'<li>', $c.moveLink.replace(/%s/g, 'Prev'), '</li>',
-					'<li>', $c.moveLink.replace(/%s/g, 'Next'), '</li>'
-				].join(''))
-			)
-		;
 		$c.ready = true;
+		if ($c.option.title) {
+			$c.createTitle();
+		}
+		if ($c.option.navi) {
+			$c.createNavi();
+		}
+		$c.createTable();
 		return this;
 	};
 
 	$c.setOption = function(option) {
 		$c.option = $.extend({
+			lang  : 'ja',
 			year  : $c.today.getFullYear(),
 			month : $c.today.getMonth() + 1,
 			day   : $c.today.getDate(),
+			navi  : {
+				en: ['Prev', 'Next'],
+				ja: ['\u524d\u306e\u6708', '\u6b21\u306e\u6708']
+			},
+			title : true,
 			events: [],
 			callback: {
 				event: $c.callback.event,
@@ -65,8 +66,44 @@
 		return this;
 	};
 
+	$c.createTitle = function() {
+		$c.title = $('<div />').addClass('title');
+		$c.elem.append($c.title);
+	};
+
+	$c.createNavi = function() {
+		var
+			format = '<a href="javascript:jQuery.calendar.move(\'%s\')">%s</a>',
+			text   = $c.option.navi[$c.option.lang];
+		$c.elem.append(
+			$('<ul />').html([
+				'<li>', format.replace('%s', 'Prev').replace('%s', text[0]), '</li>',
+				'<li>', format.replace('%s', 'Next').replace('%s', text[1]), '</li>'
+			].join(''))
+		);
+	};
+
+	$c.createTable = function() {
+		$c.tbody = $('<tbody />');
+		$c.tr = $('<tr />');
+		$c.td = $('<td />');
+		var week = [];
+		for (var i = 0, wd; wd = $c.weekDay[$c.option.lang][i]; i++) {
+			week[week.length] = [
+				'<th class="', $c.weekDay.name[i], '">', wd , '</td>'
+			].join('');
+		}
+		$c.elem.append(
+			$('<table />')
+				.append($('<thead />')
+					.append($c.tr.clone().html(week.join('')))
+				)
+				.append($c.tbody)
+		);
+	};
+
 	$c.create = function() {
-		$('tbody', $c.elem).empty();
+		$c.tbody.empty();
 		$c.view = {};
 		$c.prevFill();
 		$c.current = new Date($c.option.year, $c.option.month - 1, 1);
@@ -107,7 +144,7 @@
 
 	$c.add = function(date, className) {
 		return $c.view[$c.getKey(date)] = $c.td.clone()
-			.addClass($c.dayName[date.getDay()])
+			.addClass($c.weekDay.name[date.getDay()])
 			.addClass(className)
 			.text(date.getDate());
 	};
@@ -140,13 +177,14 @@
 	$c.show = function() {
 		var
 			today = $c.getKey($c.today),
-			tbody = $('tbody', $c.elem),
 			tr, count = 0;
-		$c.title.text($c.getKey($c.current).slice(0, 7));
+		if ($c.title) {
+			$c.title.text($c.getKey($c.current).slice(0, 7));
+		}
 		$.each($c.view, function(key) {
 			if (count % 7 == 0 || count == 0) {
 				tr = $c.tr.clone();
-				tbody.append(tr);
+				$c.tbody.append(tr);
 			}
 			if (key == today && !this.attr('class').match('otherMonth')) {
 				this.addClass('today');
