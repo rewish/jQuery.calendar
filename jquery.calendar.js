@@ -211,7 +211,7 @@
 				$c.option.month++;
 				break;
 		}
-		$c.option.callback.move($c.elem);
+		$c.option.callback.move($c.elem, $c.option);
 	};
 
 	$c.callback = {
