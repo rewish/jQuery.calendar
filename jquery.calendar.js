@@ -62,7 +62,7 @@
 			events: [],
 			eventCallback: $c.callback.event,
 			moveCallback : $c.callback.move,
-			otherEmpty: false,
+			otherHide: false,
 		}, option);
 		return this;
 	};
@@ -130,7 +130,7 @@
 		if (last - day >= 6) return this;
 		for (; day <= last; day++) {
 			prev.setDate(day);
-			$c.add(prev, 'otherMonth', $c.option.otherEmpty);
+			$c.add(prev, 'otherMonth', $c.option.otherHide);
 		}
 		return this;
 	};
@@ -142,7 +142,7 @@
 		if (last >= 7) return this;
 		for (var day = 1; day <= last; day++) {
 			next.setDate(day);
-			$c.add(next, 'otherMonth', $c.option.otherEmpty);
+			$c.add(next, 'otherMonth', $c.option.otherHide);
 		}
 		return this;
 	};
