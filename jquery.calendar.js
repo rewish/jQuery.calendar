@@ -54,15 +54,15 @@
 			lang  : 'ja',
 			year  : $c.today.getFullYear(),
 			month : $c.today.getMonth() + 1,
+			title : '%Y-%M',
 			navi  : {
-				en: ['Prev', 'Next'],
-				ja: ['\u524d\u306e\u6708', '\u6b21\u306e\u6708']
+				en: ['&lt;&lt;Prev', 'Next&gt;&gt;'],
+				ja: ['&lt;&lt;\u524d\u306e\u6708', '\u6b21\u306e\u6708&gt;&gt;']
 			},
-			title : true,
 			events: [],
 			eventCallback: $c.callback.event,
 			moveCallback : $c.callback.move,
-			otherHide: false,
+			otherHide: false
 		}, option);
 		return this;
 	};
@@ -192,7 +192,12 @@
 			today = $c.getKey($c.today),
 			tr, count = 0;
 		if ($c.title) {
-			$c.title.text($c.getKey($c.current).slice(0, 7));
+			var date = $c.getKey($c.current).split('-');
+			$c.title.text(
+				$c.option.title
+					.replace(/%Y/i, date[0])
+					.replace(/%M/i, date[1])
+			);
 		}
 		$.each($c.view, function(key) {
 			if (count % 7 == 0 || count == 0) {
