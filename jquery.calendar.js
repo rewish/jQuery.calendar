@@ -149,7 +149,8 @@
 
 	$c.add = function(date, className, empty) {
 		if (empty) {
-			return $c.view[$c.getKey(date)] = $c.td.clone();
+			return $c.view[$c.getKey(date)] = $c.td.clone()
+				.addClass(className);
 		}
 		return $c.view[$c.getKey(date)] = $c.td.clone()
 			.addClass($c.weekDay.name[date.getDay()])
