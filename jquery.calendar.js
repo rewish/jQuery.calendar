@@ -74,15 +74,20 @@
 
 	$c.createNavi = function() {
 		var
-			format = '<a href="javascript:jQuery.calendar.move(\'%s\')">%s</a>',
-			text   = $c.option.navi[$c.option.lang];
+			// @TODO Refactoring
+			list = function(className, number, text) {
+				return [
+					'<li class="', className, '">',
+					'<a href="javascript:jQuery.calendar.move(',
+					number, ')">', text, '</a></li>'
+				].join('');
+			},
+			text = $c.option.navi[$c.option.lang];
 		$c.elem.append(
 			$('<ul />')
 				.addClass('moveNavi')
-				.html([
-					'<li class="prev">', format.replace(/%s/g, text[0]), '</li>',
-					'<li class="next">', format.replace(/%s/g, text[1]), '</li>'
-				].join(''))
+				.append(list('prev', -1, text[0]))
+				.append(list('next',  1, text[1]))
 		);
 	};
 
@@ -213,15 +218,8 @@
 		return this;
 	};
 
-	$c.move = function(type) {
-		switch (type) {
-			case $c.option.navi[$c.option.lang][0]:
-				$c.option.month--;
-				break;
-			case $c.option.navi[$c.option.lang][1]:
-				$c.option.month++;
-				break;
-		}
+	$c.move = function(number) {
+		$c.option.month = $c.option.month + number;
 		$c.option.moveCallback($c.elem, $c.option);
 	};
 
