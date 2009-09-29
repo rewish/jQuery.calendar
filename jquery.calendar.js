@@ -87,22 +87,26 @@
 	};
 
 	$c.createTable = function() {
-		$c.tbody = $('<tbody />');
 		$c.tr = $('<tr />');
 		$c.td = $('<td />');
-		var week = [];
-		for (var i = 0, wd; wd = $c.weekDay[$c.option.lang][i]; i++) {
-			week[week.length] = [
-				'<th class="', $c.weekDay.name[i], '">', wd , '</td>'
-			].join('');
+		var table = $('table:first', $c.elem);
+		table = table.size() > 0 ? table : $('<table />');
+		var thead = $('thead:first', table);
+		if (thead.size() < 1) {
+			var week = [];
+			for (var i = 0, wd; wd = $c.weekDay[$c.option.lang][i]; i++) {
+				week[week.length] = [
+					'<th class="', $c.weekDay.name[i], '">', wd , '</td>'
+				].join('');
+			}
+			thead = $('<thead />').append($c.tr.clone().html(week.join('')))
 		}
+		var tbody = $('tbody:first', table);
+		$c.tbody = tbody.size() > 0 ? tbody : $('<tbody />');
 		$c.elem.append(
-			$('<table />')
+			table
 				.addClass('calendar')
-				.append(
-					$('<thead />')
-						.append($c.tr.clone().html(week.join('')))
-				)
+				.append(thead)
 				.append($c.tbody)
 		);
 	};
