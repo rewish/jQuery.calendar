@@ -78,8 +78,8 @@
 			list = function(className, number, text) {
 				return [
 					'<li class="', className, '">',
-					'<a href="javascript:jQuery.calendar.move(',
-					number, ')">', text, '</a></li>'
+					'<a href="javascript:jQuery.calendar.move',
+					'(', number, ')">', text, '</a></li>'
 				].join('');
 			},
 			text = $c.option.navi[$c.option.lang];
@@ -97,7 +97,7 @@
 		var table = $('table:first', $c.elem);
 		table = table.size() > 0 ? table : $('<table />');
 		var thead = $('thead:first', table);
-		if (thead.size() < 1) {
+		if (thead.size() < 1 || $('th', thead).size() < 1) {
 			var week = [];
 			for (var i = 0, wd; wd = $c.weekDay[$c.option.lang][i]; i++) {
 				week[week.length] = [
