@@ -61,7 +61,8 @@
 			title : true,
 			events: [],
 			eventCallback: $c.callback.event,
-			moveCallback : $c.callback.move
+			moveCallback : $c.callback.move,
+			otherEmpty: false,
 		}, option);
 		return this;
 	};
@@ -129,7 +130,7 @@
 		if (last - day >= 6) return this;
 		for (; day <= last; day++) {
 			prev.setDate(day);
-			$c.add(prev, 'otherMonth');
+			$c.add(prev, 'otherMonth', $c.option.otherEmpty);
 		}
 		return this;
 	};
@@ -141,12 +142,15 @@
 		if (last >= 7) return this;
 		for (var day = 1; day <= last; day++) {
 			next.setDate(day);
-			$c.add(next, 'otherMonth');
+			$c.add(next, 'otherMonth', $c.option.otherEmpty);
 		}
 		return this;
 	};
 
-	$c.add = function(date, className) {
+	$c.add = function(date, className, empty) {
+		if (empty) {
+			return $c.view[$c.getKey(date)] = $c.td.clone();
+		}
 		return $c.view[$c.getKey(date)] = $c.td.clone()
 			.addClass($c.weekDay.name[date.getDay()])
 			.addClass(className)
