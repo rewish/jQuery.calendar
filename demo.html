@@ -7,10 +7,7 @@
 	<script type="text/javascript" src="jquery.calendar.js"></script>
 	<script type="text/javascript">
 jQuery(document).ready(function($) {
-	// カレンダーは一個しか作れない。
-
 	// 2009年9月のカレンダーを表示。
-	$('#calendar2').calendar();
 	$('#calendar').calendar({
 		lang: 'ja',
 		year: 2009,
@@ -43,12 +40,17 @@ jQuery(document).ready(function($) {
 			td.append(e).addClass('event');
 		}
 	});
+
+	$('#calendar2').calendar();
+
 });
 	</script>
 <style type="text/css">
-#calendar {
+#calendar,
+#calendar2 {
 	position: relative;
 	width: 602px;
+	margin: 0 0 30px;
 }
 
 div.title {
@@ -122,22 +124,23 @@ td.event span {
 </head>
 <body>
 
-<div id="calendar2"></div>
 <div id="calendar">
 	<table>
 		<thead>
 			<tr>
-				<th>日</th>
-				<th>月</th>
-				<th>火</th>
-				<th>水</th>
-				<th>木</th>
-				<th>金</th>
-				<th>土</th>
+				<th class="sun">にち</th>
+				<th class="mon">げつ</th>
+				<th class="tue">か</th>
+				<th class="wed">すい</th>
+				<th class="thu">もく</th>
+				<th class="fri">きん</th>
+				<th class="sat">ど</th>
 			</tr>
 		</thead>
 	</table>
 </div>
+
+<div id="calendar2"></div>
 
 </body>
 </html>
