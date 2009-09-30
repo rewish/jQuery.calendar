@@ -10,6 +10,7 @@ jQuery(document).ready(function($) {
 	// カレンダーは一個しか作れない。
 
 	// 2009年9月のカレンダーを表示。
+	$('#calendar2').calendar();
 	$('#calendar').calendar({
 		lang: 'ja',
 		year: 2009,
@@ -121,6 +122,7 @@ td.event span {
 </head>
 <body>
 
+<div id="calendar2"></div>
 <div id="calendar">
 	<table>
 		<thead>
