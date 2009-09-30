@@ -16,16 +16,10 @@ $.fn.calendar = function(option) {
 
 $.calendar = function(elem, option) {
 	return $.extend(true, {}, $.calendar._private)
-		.init(elem, option)
-		.create()
-		.addEvent()
-		.show()
-	;
+		.init(elem, option).build().show();
 };
 
 $.calendar._private = {
-
-	ready: false,
 
 	weekDay: {
 		name: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
@@ -33,22 +27,15 @@ $.calendar._private = {
 		ja  : ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
 	},
 
-	init: function(option) {
+	init: function(elem, option) {
 		this.elem  = elem;
-		this.today = new Date,
-		this.setOption(option);
-		if (this.ready) {
-			return this;
-		}
-		this.ready = true;
-		if (this.option.title) {
-			this.createTitle();
-		}
-		if (this.option.navi) {
-			this.createNavi();
-		}
-		this.createTable();
-		return this;
+		this.today = new Date;
+		this.view  = {};
+		return this
+			.setOption(option)
+			.createTitle()
+			.createNavi()
+			.createTable();
 	},
 
 	setOption: function(option) {
@@ -74,17 +61,26 @@ $.calendar._private = {
 	},
 
 	createTitle: function() {
-		this.title = $('<div />').addClass('title');
-		this.elem.append(this.title);
+		if (this.option.title) {
+			this.title = $('<div />').addClass('title');
+			this.elem.append(this.title);
+		}
+		return this;
 	},
 
 	createNavi: function() {
+		if (!this.option.navi) {
+			return this;
+		}
 		var
 			self = this,
 			list = function(className, number, text) {
-				var a = $('<a />').text(text)
-					.attr('href', 'javascript:void(0);')
-					.click(function() { self.move(number); });
+				var a = $('<a />').text(text);
+				a.attr('href', 'javascript:void(0)');
+				a.click(function() {
+					self.move(number);
+					return false;
+				});
 				return $('<li />').addClass(className).append(a);
 			},
 			text = this.option.navi[this.option.lang];
@@ -94,6 +90,7 @@ $.calendar._private = {
 				.append(list('prev', -1, text[0]))
 				.append(list('next',  1, text[1]))
 		);
+		return this;
 	},
 
 	// Chaos!!
@@ -116,28 +113,34 @@ $.calendar._private = {
 		}
 		// tbody
 		this.tbody = $('tbody:first', this.table);
-		this.tbody = this.tbody.size() > 0 ? this.tbody : $('<tbody />');
+		this.tbody = (this.tbody.size() > 0 ? this.tbody : $('<tbody />')).empty();
 		this.elem.append(
 			this.table
 				.addClass('calendar')
 				.append(this.thead)
 				.append(this.tbody)
 		);
+		return this;
 	},
 
-	create: function() {
-		this.tbody.empty();
-		this.view = {};
+	build: function() {
 		this.prevFill();
 		this.current = new Date(this.option.year, this.option.month - 1, 1);
 		var last = new Date(this.option.year, this.option.month, 0).getDate();
 		for (var day = 1; day <= last; day++) {
 			this.current.setDate(day);
-			this.add(this.current, 'currentMonth')
+			this.addDay(this.current, 'currentMonth')
 				.attr('id', ['calendar', this.getKey(this.current)].join('-'));
 		}
 		this.nextFill();
+		this.addEvent();
 		return this;
+	},
+
+	rebuild: function() {
+		this.tbody.empty();
+		this.view = {};
+		return this.build();
 	},
 
 	prevFill: function() {
@@ -148,7 +151,7 @@ $.calendar._private = {
 		if (last - day >= 6) return this;
 		for (; day <= last; day++) {
 			prev.setDate(day);
-			this.add(prev, 'otherMonth', this.option.otherHide);
+			this.addDay(prev, 'otherMonth', this.option.otherHide);
 		}
 		return this;
 	},
@@ -160,12 +163,12 @@ $.calendar._private = {
 		if (last >= 7) return this;
 		for (var day = 1; day <= last; day++) {
 			next.setDate(day);
-			this.add(next, 'otherMonth', this.option.otherHide);
+			this.addDay(next, 'otherMonth', this.option.otherHide);
 		}
 		return this;
 	},
 
-	add: function(date, className, empty) {
+	addDay: function(date, className, empty) {
 		if (empty) {
 			return this.view[this.getKey(date)] = this.td.clone()
 				.addClass(className);
@@ -233,7 +236,8 @@ $.calendar._private = {
 		var self = this;
 		var moveAction = function() {
 			self.option.month = self.option.month + number;
-			self.option.moveCallback(self, self.elem, self.option);
+			self.option.moveCallback(self.elem, self.option);
+			self.rebuild().show();
 		};
 		if (this.option.fadeTime <= 0) {
 			return moveAction();
@@ -253,8 +257,8 @@ $.calendar._private = {
 			e.text(td.text());
 			td.text('').append(e).addClass('event');
 		},
-		move: function(obj, elem) {
-			obj.run(elem);
+		move: function(elem, option) {
+			return;
 		}
 	}
 
