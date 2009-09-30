@@ -5,6 +5,8 @@
  * @author   rew <rewish.org@gmail.com>
  * @link     http://rewish.org/
  * @license  http://rewish.org/license/mit The MIT License
+ *
+ * @TODO Refactoring
  */
 (function($) {
 
@@ -13,6 +15,7 @@
 	};
 
 	var $c = $.calendar = function(elem, option) {
+		console.time('run');
 		$.calendar.elem = elem;
 		$.calendar
 			.init(option)
@@ -20,6 +23,7 @@
 			.addEvent()
 			.show()
 		;
+		console.timeEnd('run');
 	};
 
 	$c.ready = false;
@@ -59,6 +63,7 @@
 				en: ['&lt;&lt;Prev', 'Next&gt;&gt;'],
 				ja: ['&lt;&lt;\u524d\u306e\u6708', '\u6b21\u306e\u6708&gt;&gt;']
 			},
+			fadeTime: 300,
 			events: [],
 			eventCallback: $c.callback.event,
 			moveCallback : $c.callback.move,
@@ -74,7 +79,6 @@
 
 	$c.createNavi = function() {
 		var
-			// @TODO Refactoring
 			list = function(className, number, text) {
 				return [
 					'<li class="', className, '">',
@@ -94,24 +98,27 @@
 	$c.createTable = function() {
 		$c.tr = $('<tr />');
 		$c.td = $('<td />');
-		var table = $('table:first', $c.elem);
-		table = table.size() > 0 ? table : $('<table />');
-		var thead = $('thead:first', table);
-		if (thead.size() < 1 || $('th', thead).size() < 1) {
+		// table
+		$c.table = $('table:first', $c.elem);
+		$c.table = $c.table.size() > 0 ? $c.table : $('<table />');
+		// thead
+		$c.thead = $('thead:first', $c.table);
+		if ($c.thead.size() < 1 || $('th', $c.thead).size() < 1) {
 			var week = [];
 			for (var i = 0, wd; wd = $c.weekDay[$c.option.lang][i]; i++) {
 				week[week.length] = [
 					'<th class="', $c.weekDay.name[i], '">', wd , '</td>'
 				].join('');
 			}
-			thead = $('<thead />').append($c.tr.clone().html(week.join('')))
+			$c.thead = $('<thead />').append($c.tr.clone().html(week.join('')))
 		}
-		var tbody = $('tbody:first', table);
-		$c.tbody = tbody.size() > 0 ? tbody : $('<tbody />');
+		// tbody
+		$c.tbody = $('tbody:first', $c.table);
+		$c.tbody = $c.tbody.size() > 0 ? $c.tbody : $('<tbody />');
 		$c.elem.append(
-			table
+			$c.table
 				.addClass('calendar')
-				.append(thead)
+				.append($c.thead)
 				.append($c.tbody)
 		);
 	};
@@ -219,8 +226,15 @@
 	};
 
 	$c.move = function(number) {
-		$c.option.month = $c.option.month + number;
-		$c.option.moveCallback($c.elem, $c.option);
+		var moveAction = function() {
+			$c.option.month = $c.option.month + number;
+			$c.option.moveCallback($c.elem, $c.option);
+		};
+		if ($c.option.fadeTime <= 0) {
+			return moveAction();
+		}
+		$c.table.fadeOut($c.option.fadeTime, moveAction);
+		$c.table.fadeIn($c.option.fadeTime);
 	};
 
 	$c.callback = {
