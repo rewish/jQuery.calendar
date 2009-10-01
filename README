@@ -1,1 +1,4 @@
-jQuery plugin to implement an Calendar.
+Example:
+jQuery(document).ready(function($) {
+	$(expr).calendar();
+});
