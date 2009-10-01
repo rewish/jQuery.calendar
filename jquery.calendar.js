@@ -33,9 +33,9 @@ $.calendar._private = {
 		this.view  = {};
 		return this
 			.setOption(option)
-			.createTitle()
 			.createNavi()
-			.createTable();
+			.createTable()
+			.createCaption();
 	},
 
 	setOption: function(option) {
@@ -46,25 +46,17 @@ $.calendar._private = {
 			lang  : 'ja',
 			year  : this.today.getFullYear(),
 			month : this.today.getMonth() + 1,
-			title : '%Y-%M',
-			navi  : {
+			caption : '%Y-%M',
+			navi : {
 				en: ['<<Prev', 'Next>>'],
 				ja: ['<<\u524d\u306e\u6708', '\u6b21\u306e\u6708>>']
 			},
-			fadeTime: 300,
-			events: [],
-			eventCallback: this.callback.event,
-			moveCallback : this.callback.move,
-			otherHide: false
+			fadeTime : 300,
+			events : [],
+			eventCallback : this.callback.event,
+			moveCallback  : this.callback.move,
+			otherHide : false
 		}, option);
-		return this;
-	},
-
-	createTitle: function() {
-		if (this.option.title) {
-			this.title = $('<div />').addClass('title');
-			this.elem.append(this.title);
-		}
 		return this;
 	},
 
@@ -120,6 +112,14 @@ $.calendar._private = {
 				.append(this.thead)
 				.append(this.tbody)
 		);
+		return this;
+	},
+
+	createCaption: function() {
+		if (this.option.caption) {
+			this.caption = $('<caption />');
+			this.table.prepend(this.caption);
+		}
 		return this;
 	},
 
@@ -206,18 +206,7 @@ $.calendar._private = {
 	},
 
 	show: function() {
-		var
-			today = this.getKey(this.today),
-			tr, count = 0;
-		if (this.title) {
-			var date = this.getKey(this.current).split('-');
-			this.title.text(
-				this.option.title
-					.replace(/%Y/i, date[0])
-					.replace(/%M/i, date[1])
-			);
-		}
-		var self = this;
+		var today = this.getKey(this.today), tr, count = 0, self = this;
 		$.each(self.view, function(key) {
 			if (count % 7 == 0 || count == 0) {
 				tr = self.tr.clone();
@@ -229,6 +218,19 @@ $.calendar._private = {
 			tr.append(this);
 			count++;
 		});
+		return this.setCaption();
+	},
+
+	setCaption: function() {
+		if (!this.option.caption) {
+			return this;
+		}
+		var date = this.getKey(this.current).split('-');
+		this.caption.text(
+			this.option.caption
+				.replace(/%Y/i, date[0])
+				.replace(/%M/i, date[1])
+		);
 		return this;
 	},
 
@@ -242,7 +244,9 @@ $.calendar._private = {
 		if (this.option.fadeTime <= 0) {
 			return moveAction();
 		}
+		this.caption.fadeOut(this.option.fadeTime);
 		this.table.fadeOut(this.option.fadeTime, moveAction);
+		this.caption.fadeIn(this.option.fadeTime);
 		this.table.fadeIn(this.option.fadeTime);
 	},
 

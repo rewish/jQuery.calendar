@@ -9,10 +9,9 @@
 jQuery(document).ready(function($) {
 	// 2009年9月のカレンダーを表示。
 	$('#calendar').calendar({
-		lang: 'ja',
 		year: 2009,
 		month: 9,
-		otherEmpty: true,
+		otherHide: true,
 		// dateのみ必須。DateオブジェクトのインスタンスかYYYY-MM-DD形式の文字列。
 		// callback関数を指定するなら、date以外は好きなものを渡して適当に使う。
 		events: [
@@ -46,6 +45,10 @@ jQuery(document).ready(function($) {
 });
 	</script>
 <style type="text/css">
+body {
+	font-family: verdana;
+}
+
 #calendar,
 #calendar2 {
 	position: relative;
@@ -53,21 +56,16 @@ jQuery(document).ready(function($) {
 	margin: 0 0 30px;
 }
 
-div.title {
+ul.moveNavi {
 	position: absolute;
 	top: 0;
 	left: 0;
-	z-index: -1;
-	width: 602px;
-	text-align: center;
-}
-
-ul.moveNavi {
-	margin: 0 0 10px;
+	width: 592px;
+	height: 20px;
+	line-height: 20px;
+	margin: 0;
 	padding: 0 5px;
 	list-style: none;
-	overflow: hidden;
-	zoom: 1;
 }
 
 ul.moveNavi li.prev {
@@ -80,6 +78,11 @@ ul.moveNavi li.next {
 
 table {
 	width: 602px;
+}
+
+caption {
+	height: 20px;
+	vertical-align: middle;
 }
 
 th,
