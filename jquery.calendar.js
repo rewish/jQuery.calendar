@@ -42,6 +42,10 @@ $.calendar._private = {
 		if (this.option && !option) {
 			return this;
 		}
+		if (this.option) {
+			$.extend(this.option, option);
+			return this;
+		}
 		this.option = $.extend({
 			lang  : 'ja',
 			year  : this.today.getFullYear(),
