@@ -175,13 +175,11 @@ $.calendar._private = {
 		var key = className == 'otherMonth'
 		        ? className + this.getKey(date)
 		        : this.getKey(date);
-		this.view[key] = this.td.clone().addClass(className);
-		if (hide) {
-			return this.view[key].text(' '); // IE <= 7 "empty-cells" fix
-		}
-		return this.view[key]
-			.addClass(this.weekDay.name[date.getDay()])
-			.text(date.getDate());
+		this.view[key] = this.td.clone()
+			.addClass(className)
+			.addClass(this.weekDay.name[date.getDay()]);
+		// White space for (IE <= 7) "empty-cells" fix
+		return this.view[key].text(hide ? ' ' : date.getDate());
 	},
 
 	getKey: function(date) {
