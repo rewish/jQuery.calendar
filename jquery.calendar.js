@@ -168,14 +168,15 @@ $.calendar._private = {
 	},
 
 	addDay: function(date, className, hide) {
+		var key = className == 'otherMonth'
+		        ? className + this.getKey(date)
+		        : this.getKey(date);
+		this.view[key] = this.td.clone().addClass(className);
 		if (hide) {
-			return this.view[this.getKey(date)] = this.td.clone()
-				.addClass(className)
-				.text(' '); // IE <= 7 "empty-cells" fix;
+			return this.view[key].text(' '); // IE <= 7 "empty-cells" fix
 		}
-		return this.view[this.getKey(date)] = this.td.clone()
+		return this.view[key]
 			.addClass(this.weekDay.name[date.getDay()])
-			.addClass(className)
 			.text(date.getDate());
 	},
 
@@ -194,13 +195,9 @@ $.calendar._private = {
 		var self = this;
 		$.each(self.option.events, function() {
 			var td = self.view[self.getKey(this.date)];
-			if (typeof td == 'undefined') {
-				return;
+			if (typeof td != 'undefined') {
+				self.option.eventCallback(td, this);
 			}
-			if (td.attr('class').match('otherMonth')) {
-				return;
-			}
-			self.option.eventCallback(td, this);
 		});
 		return this;
 	},
@@ -212,7 +209,7 @@ $.calendar._private = {
 				tr = self.tr.clone();
 				self.tbody.append(tr);
 			}
-			if (key == today && !this.attr('class').match('otherMonth')) {
+			if (key == today && !key.match('otherMonth')) {
 				this.addClass('today');
 			}
 			tr.append(this);
@@ -273,9 +270,7 @@ $.calendar._private = {
 			e.text(td.text());
 			td.text('').append(e).addClass('event');
 		},
-		move: function(elem, option) {
-			return;
-		}
+		move: function(elem, option) {}
 	}
 
 };
