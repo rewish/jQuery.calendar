@@ -119,7 +119,7 @@ $.calendar._private = {
 	},
 
 	createCaption: function() {
-		if (this.option.caption) {
+		if (this.option.caption && !this.caption) {
 			this.caption = $('<caption />');
 			this.table.prepend(this.caption);
 		}
@@ -241,8 +241,9 @@ $.calendar._private = {
 		var self = this;
 		var moveAction = function() {
 			self.option.month = self.option.month + number;
-			self.option.moveCallback(self.elem, self.option);
-			self.rebuild().show();
+			if (self.option.moveCallback(number, self) !== false) {
+				self.rebuild().show();
+			}
 		};
 		if (this.option.fadeTime <= 0) {
 			return moveAction();
@@ -262,7 +263,6 @@ $.calendar._private = {
 		this.table.fadeIn(this.option.fadeTime, function() {
 			fixFilter(this);
 		});
-		return this;
 	},
 
 	callback: {
