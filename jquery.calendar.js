@@ -64,18 +64,17 @@ $.calendar._private = {
 		if (!this.option.navi) {
 			return this;
 		}
-		var
-			self = this,
-			list = function(className, number, text) {
-				var a = $('<a />').text(text);
-				a.attr('href', 'javascript:void(0)');
-				a.click(function() {
-					self.move(number);
-					return false;
-				});
-				return $('<li />').addClass(className).append(a);
-			},
-			text = this.option.navi[this.option.lang];
+		var self = this;
+		var list = function(className, number, text) {
+			var a = $('<a />').text(text);
+			a.attr('href', 'javascript:void(0)');
+			a.click(function() {
+				self.move(number);
+				return false;
+			});
+			return $('<li />').addClass(className).append(a);
+		};
+		var text = this.option.navi[this.option.lang];
 		this.elem.append(
 			$('<ul />')
 				.addClass('moveNavi')
@@ -168,10 +167,11 @@ $.calendar._private = {
 		return this;
 	},
 
-	addDay: function(date, className, empty) {
-		if (empty) {
+	addDay: function(date, className, hide) {
+		if (hide) {
 			return this.view[this.getKey(date)] = this.td.clone()
-				.addClass(className);
+				.addClass(className)
+				.text(' '); // IE <= 7 "empty-cells" fix;
 		}
 		return this.view[this.getKey(date)] = this.td.clone()
 			.addClass(this.weekDay.name[date.getDay()])
@@ -244,10 +244,22 @@ $.calendar._private = {
 		if (this.option.fadeTime <= 0) {
 			return moveAction();
 		}
+		// IE <= 7 ClearType fix
+		var fixFilter = function(e) {
+			if (!window.opera && typeof e.style.filter != 'undefined') {
+				e.style.removeAttribute('filter');
+			}
+		};
+		// caption fadeIn & fadeOut for Firefox fix
 		this.caption.fadeOut(this.option.fadeTime);
 		this.table.fadeOut(this.option.fadeTime, moveAction);
-		this.caption.fadeIn(this.option.fadeTime);
-		this.table.fadeIn(this.option.fadeTime);
+		this.caption.fadeIn(this.option.fadeTime, function() {
+			fixFilter(this);
+		});
+		this.table.fadeIn(this.option.fadeTime, function() {
+			fixFilter(this);
+		});
+		return this;
 	},
 
 	callback: {
