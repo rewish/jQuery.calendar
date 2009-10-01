@@ -8,18 +8,16 @@
  *
  * @TODO Refactoring
  */
-(function($) {
-
-$.fn.calendar = function(option) {
-	return $.calendar(this, option);
+jQuery.fn.calendar = function(option) {
+	jQuery.calendar(this, option);
+	return this;
 };
 
-$.calendar = function(elem, option) {
-	return $.extend(true, {}, $.calendar._private)
-		.init(elem, option).build().show();
-};
+jQuery.calendar = function(elem, option) {
 
-$.calendar._private = {
+var $ = jQuery;
+
+return ({
 
 	weekDay: {
 		name: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
@@ -277,6 +275,6 @@ $.calendar._private = {
 		move: function(elem, option) {}
 	}
 
-};
+}).init(elem, option).build().show();
 
-})(jQuery);
+};
