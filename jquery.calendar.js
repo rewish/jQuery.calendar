@@ -206,7 +206,9 @@ $.calendar._private = {
 		var today = this.getKey(this.today), tr, count = 0, self = this;
 		$.each(self.view, function(key) {
 			if (count % 7 == 0 || count == 0) {
-				tr = self.tr.clone();
+				tr = count % 2 == 0
+				   ? self.tr.clone().addClass('even')
+				   : self.tr.clone().addClass('odd');
 				self.tbody.append(tr);
 			}
 			if (key == today && !key.match('otherMonth')) {
