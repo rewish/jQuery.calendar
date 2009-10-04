@@ -170,7 +170,7 @@ return ({
 	},
 
 	addDay: function(date, className, hide) {
-		var key = className == 'otherMonth'
+		var key = className === 'otherMonth'
 		        ? className + this.getKey(date)
 		        : this.getKey(date);
 		this.view[key] = this.td.clone()
@@ -181,7 +181,7 @@ return ({
 	},
 
 	getKey: function(date) {
-		if (typeof date == 'string') {
+		if (typeof date === 'string') {
 			date = date.split('-');
 		}
 		return [
@@ -195,7 +195,7 @@ return ({
 		var self = this;
 		$.each(self.option.events, function() {
 			var td = self.view[self.getKey(this.date)];
-			if (typeof td != 'undefined') {
+			if (typeof td !== 'undefined') {
 				self.option.eventCallback(td, this);
 			}
 		});
@@ -205,13 +205,13 @@ return ({
 	show: function() {
 		var today = this.getKey(this.today), tr, count = 0, self = this;
 		$.each(self.view, function(key) {
-			if (count % 7 == 0 || count == 0) {
+			if (count % 7 === 0 || count === 0) {
 				tr = count % 2 == 0
 				   ? self.tr.clone().addClass('even')
 				   : self.tr.clone().addClass('odd');
 				self.tbody.append(tr);
 			}
-			if (key == today && !key.match('otherMonth')) {
+			if (key === today && !key.match('otherMonth')) {
 				this.addClass('today');
 			}
 			tr.append(this);
@@ -246,7 +246,7 @@ return ({
 		}
 		// IE <= 7 ClearType fix
 		var fixFilter = function(e) {
-			if (!window.opera && typeof e.style.filter != 'undefined') {
+			if (!window.opera && typeof e.style.filter !== 'undefined') {
 				e.style.removeAttribute('filter');
 			}
 		};
