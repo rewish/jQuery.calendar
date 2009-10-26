@@ -210,7 +210,7 @@ return ({
 		$.each(self.option.events, function() {
 			var td = self.view[self.getKey(this.date)];
 			if (typeof td !== 'undefined') {
-				self.option.eventCallback(td, this);
+				self.option.callback(td, this);
 			}
 		});
 		return this;
