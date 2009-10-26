@@ -6,7 +6,7 @@
  * @link     http://rewish.org/
  * @license  http://rewish.org/license/mit The MIT License
  */
-jQuery.fn.calendar = function(option) {
+jQuery.fn.calendar = function(option, callback) {
 
 var $ = jQuery, NAMESPACE = 'jqueryCalendar';
 
@@ -17,7 +17,7 @@ return ({
 		ja  : ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
 	},
 
-	init: function(elem, option) {
+	init: function(elem, option, callback) {
 		this.elem = $('<div />')
 			.addClass(NAMESPACE)
 			.html(elem.html());
@@ -26,7 +26,7 @@ return ({
 		this.today = new Date;
 		this.view  = {};
 		return this
-			.setOption(option)
+			.setOption(option, callback)
 			.createNavi()
 			.createTable()
 			.createCaption()
@@ -50,10 +50,8 @@ return ({
 				en: ['<<Prev', 'Next>>'],
 				ja: ['<<\u524d\u306e\u6708', '\u6b21\u306e\u6708>>']
 			},
-			fadeTime : 300,
 			events : [],
-			eventCallback : this.callback.event,
-			moveCallback  : this.callback.move,
+			callback : callback || this.callback,
 			hideOtherMonth : false
 		}, option);
 		return this;
@@ -273,23 +271,20 @@ return ({
 		clone.animate(css, 1000, function() { clone.remove(); });
 	},
 
-	callback: {
-		event: function(td, evt) {
-			var e = typeof evt.url != 'undefined'
-				? $('<a />').attr('href', evt.url)
-				: $('<span />');
-			if (evt.id) {
-				e.attr('id', 'event-' + evt.id);
-			}
-			if (evt.title) {
-				e.attr('title', evt.title);
-			}
-			e.text(td.text());
-			td.text('').append(e).addClass('event');
-		},
-		move: function(elem, option) {}
+	callback: function(td, evt) {
+		var e = typeof evt.url != 'undefined'
+			? $('<a />').attr('href', evt.url)
+			: $('<span />');
+		if (evt.id) {
+			e.attr('id', 'event-' + evt.id);
+		}
+		if (evt.title) {
+			e.attr('title', evt.title);
+		}
+		e.text(td.text());
+		td.text('').append(e).addClass('event');
 	}
 
-}).init(this, option).build().show();
+}).init(this, option, callback).build().show();
 
 };
