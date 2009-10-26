@@ -22,8 +22,6 @@ div.jqueryCalendar ul.navi {
 	margin		: 0;
 	padding		: 7px 5px 0;
 	background	: #FFF url('images/box_head.png') 0 0 no-repeat;
-	overflow	: hidden;
-	zoom		: 1;
 }
 
 div.jqueryCalendar ul.navi li {
