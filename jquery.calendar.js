@@ -1,24 +1,16 @@
 /**
  * jQuery.calendar
  *
- * @version  0.2-dev
+ * @version  0.3
  * @author   rew <rewish.org@gmail.com>
  * @link     http://rewish.org/
  * @license  http://rewish.org/license/mit The MIT License
- *
- * @TODO Refactoring
  */
 jQuery.fn.calendar = function(option) {
-	jQuery.calendar(this, option);
-	return this;
-};
 
-jQuery.calendar = function(elem, option) {
-
-var $ = jQuery;
+var $ = jQuery, NAMESPACE = 'jqueryCalendar';
 
 return ({
-
 	weekDay: {
 		name: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
 		en  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
@@ -26,14 +18,19 @@ return ({
 	},
 
 	init: function(elem, option) {
-		this.elem  = elem;
+		this.elem = $('<div />')
+			.addClass(NAMESPACE)
+			.html(elem.html());
+		this.wrap = $('<div />').append(this.elem);
+		elem.html('').append(this.wrap);
 		this.today = new Date;
 		this.view  = {};
 		return this
 			.setOption(option)
 			.createNavi()
 			.createTable()
-			.createCaption();
+			.createCaption()
+			.createTodayLink();
 	},
 
 	setOption: function(option) {
@@ -57,7 +54,7 @@ return ({
 			events : [],
 			eventCallback : this.callback.event,
 			moveCallback  : this.callback.move,
-			otherHide : false
+			hideOtherMonth : false
 		}, option);
 		return this;
 	},
@@ -79,14 +76,13 @@ return ({
 		var text = this.option.navi[this.option.lang];
 		this.elem.append(
 			$('<ul />')
-				.addClass('moveNavi')
+				.addClass('navi')
 				.append(list('prev', -1, text[0]))
 				.append(list('next',  1, text[1]))
 		);
 		return this;
 	},
 
-	// Chaos!!
 	createTable: function() {
 		this.tr = $('<tr />');
 		this.td = $('<td />');
@@ -108,19 +104,39 @@ return ({
 		this.tbody = $('tbody:first', this.table);
 		this.tbody = (this.tbody.size() > 0 ? this.tbody : $('<tbody />')).empty();
 		this.elem.append(
-			this.table
-				.addClass('calendar')
-				.append(this.thead)
-				.append(this.tbody)
+			$('<div />')
+				.addClass('main')
+				.append(
+					this.table
+						.addClass('calendar')
+						.append(this.thead)
+						.append(this.tbody)
+				)
 		);
 		return this;
 	},
 
 	createCaption: function() {
 		if (this.option.caption && !this.caption) {
-			this.caption = $('<caption />');
-			this.table.prepend(this.caption);
+			this.caption = $('<div />').addClass('caption');
+			this.table.before(this.caption);
 		}
+		return this;
+	},
+
+	createTodayLink: function() {
+		var self = this;
+		this.table.after(
+			$('<div />').addClass('todayLink').append(
+				$('<a />')
+					.text(['Today [', self.getKey(self.today), ']'].join(''))
+					.attr('href', 'javascript:void(0)')
+					.click(function() {
+						self.option.month = self.today.getMonth() + 1;
+						self.rebuild().show();
+					})
+			)
+		);
 		return this;
 	},
 
@@ -152,7 +168,7 @@ return ({
 		if (last - day >= 6) return this;
 		for (; day <= last; day++) {
 			prev.setDate(day);
-			this.addDay(prev, 'otherMonth', this.option.otherHide);
+			this.addDay(prev, 'otherMonth', this.option.hideOtherMonth);
 		}
 		return this;
 	},
@@ -164,7 +180,7 @@ return ({
 		if (last >= 7) return this;
 		for (var day = 1; day <= last; day++) {
 			next.setDate(day);
-			this.addDay(next, 'otherMonth', this.option.otherHide);
+			this.addDay(next, 'otherMonth', this.option.hideOtherMonth);
 		}
 		return this;
 	},
@@ -234,31 +250,27 @@ return ({
 	},
 
 	move: function(number) {
-		var self = this;
-		var moveAction = function() {
-			self.option.month = self.option.month + number;
-			if (self.option.moveCallback(number, self) !== false) {
-				self.rebuild().show();
-			}
-		};
-		if (this.option.fadeTime <= 0) {
-			return moveAction();
-		}
-		// IE <= 7 ClearType fix
-		var fixFilter = function(e) {
-			if (!window.opera && typeof e.style.filter !== 'undefined') {
-				e.style.removeAttribute('filter');
-			}
-		};
-		// caption fadeIn & fadeOut for Firefox fix
-		this.caption.fadeOut(this.option.fadeTime);
-		this.table.fadeOut(this.option.fadeTime, moveAction);
-		this.caption.fadeIn(this.option.fadeTime, function() {
-			fixFilter(this);
+		var self  = this;
+		var width = self.elem.innerWidth();
+		this.wrap.css({
+			position: 'relative',
+			width: width,
+			overflow: 'hidden'
 		});
-		this.table.fadeIn(this.option.fadeTime, function() {
-			fixFilter(this);
+		var pos   = self.elem.position();
+		var clone = self.elem.clone().show().css({
+			position: 'absolute',
+			top: pos.top + 'px',
+			left: pos.left + 'px',
+			zIndex: 2
 		});
+		self.wrap.append(clone);
+		self.option.month = self.option.month + number;
+		self.rebuild().show();
+		var css = (number + '').charAt(0) === '-'
+		        ? {marginLeft: width * 2}
+		        : {marginLeft: '-' + (width * 2)};
+		clone.animate(css, 1000, function() { clone.remove(); });
 	},
 
 	callback: {
@@ -269,12 +281,15 @@ return ({
 			if (evt.id) {
 				e.attr('id', 'event-' + evt.id);
 			}
+			if (evt.title) {
+				e.attr('title', evt.title);
+			}
 			e.text(td.text());
 			td.text('').append(e).addClass('event');
 		},
 		move: function(elem, option) {}
 	}
 
-}).init(elem, option).build().show();
+}).init(this, option).build().show();
 
 };
