@@ -21,7 +21,12 @@ return ({
 		this.elem = $('<div />')
 			.addClass(NAMESPACE)
 			.html(elem.html());
+		this.elem.css('z-index', 2);
 		this.wrap = $('<div />').append(this.elem);
+		this.wrap.css({
+			position: 'relative',
+			overflow: 'hidden'
+		});
 		elem.html('').append(this.wrap);
 		this.today = new Date;
 		this.view  = {};
@@ -42,17 +47,18 @@ return ({
 			return this;
 		}
 		this.option = $.extend({
-			lang  : 'ja',
-			year  : this.today.getFullYear(),
-			month : this.today.getMonth() + 1,
-			caption : '%Y-%M',
-			navi : {
+			lang : 'ja',
+			year : this.today.getFullYear(),
+			month: this.today.getMonth() + 1,
+			caption: '%Y-%M',
+			navi: {
 				en: ['<<Prev', 'Next>>'],
 				ja: ['<<\u524d\u306e\u6708', '\u6b21\u306e\u6708>>']
 			},
-			events : [],
-			callback : callback || this.callback,
-			hideOtherMonth : false
+			moveTime: 700,
+			events: [],
+			callback: callback || this.callback,
+			hideOtherMonth: false
 		}, option);
 		return this;
 	},
@@ -250,25 +256,39 @@ return ({
 	move: function(number) {
 		var self  = this;
 		var width = self.elem.innerWidth();
-		this.wrap.css({
-			position: 'relative',
-			width: width,
-			overflow: 'hidden'
-		});
 		var pos   = self.elem.position();
-		var clone = self.elem.clone().show().css({
+		var clone = self.elem.clone().css({
 			position: 'absolute',
 			top: pos.top + 'px',
 			left: pos.left + 'px',
-			zIndex: 2
+			zIndex: 1
 		});
-		self.wrap.append(clone);
+		self.wrap.append(clone).css({
+			width: width + 'px',
+			height: self.elem.innerHeight()
+		});
+		// Month change
 		self.option.month = self.option.month + number;
 		self.rebuild().show();
-		var css = (number + '').charAt(0) === '-'
-		        ? {marginLeft: width * 3}
-		        : {marginLeft: '-' + (width * 3)};
-		clone.animate(css, 1000, function() { clone.remove(); });
+		// Moving animation
+		var time = self.option.moveTime;
+		self.wrap.animate({height: self.elem.innerHeight()}, time);
+		// Next moving
+		if ((number + '').charAt(0) !== '-') {
+			clone.animate({marginLeft: '-' + width + 'px'}, time, function() {
+				clone.remove();
+			});
+			return;
+		}
+		// Prev moving
+		self.elem.css({
+			position: 'absolute',
+			marginLeft: '-' + width + 'px'
+		});
+		self.elem.animate({marginLeft: 0}, time, function() {
+			clone.remove();
+			self.elem.css('position', 'static');
+		});
 	},
 
 	callback: function(td, evt) {
