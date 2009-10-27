@@ -266,8 +266,8 @@ return ({
 		self.option.month = self.option.month + number;
 		self.rebuild().show();
 		var css = (number + '').charAt(0) === '-'
-		        ? {marginLeft: width * 2}
-		        : {marginLeft: '-' + (width * 2)};
+		        ? {marginLeft: width * 3}
+		        : {marginLeft: '-' + (width * 3)};
 		clone.animate(css, 1000, function() { clone.remove(); });
 	},
 

@@ -71,8 +71,8 @@ div.jqueryCalendar div.caption {
 	padding		: 2px;
 	font-size	: 13px;
 	line-height	: 18px;
-	vertical-align: middle;
 	text-align	: center;
+	vertical-align	: middle;
 }
 
 div.jqueryCalendar div.main table {
@@ -92,14 +92,14 @@ div.jqueryCalendar div.main td {
 	border-left	: 2px solid #FCFCFC;
 	border-bottom	: 2px solid #FCFCFC;
 	color		: #666;
-	line-height		: 25px;
+	line-height	: 25px;
 	text-align	: center;
 	vertical-align	: middle;
 }
 
 div.jqueryCalendar div.main th {
 	height		: 20px;
-	line-height		: 20px;
+	line-height	: 20px;
 }
 
 div.jqueryCalendar div.main td {
