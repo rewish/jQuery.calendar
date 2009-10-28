@@ -11,11 +11,7 @@ jQuery.fn.calendar = function(option, callback) {
 var $ = jQuery, NAMESPACE = 'jqueryCalendar';
 
 return ({
-	weekDay: {
-		name: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
-		en  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-		ja  : ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
-	},
+	weekName: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
 
 	init: function(elem, option, callback) {
 		this.elem = $('<div />')
@@ -47,14 +43,21 @@ return ({
 			return this;
 		}
 		this.option = $.extend({
-			lang : 'ja',
-			year : this.today.getFullYear(),
-			month: this.today.getMonth() + 1,
-			caption: '%Y-%M',
+			lang: 'ja',
+			week: {
+				en  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+				ja  : ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
+			},
+			caption: {
+				en: '%Y-%M',
+				ja: '%Y\u5e74%M\u6708'
+			},
 			navi: {
 				en: ['<<Prev', 'Next>>'],
 				ja: ['<<\u524d\u306e\u6708', '\u6b21\u306e\u6708>>']
 			},
+			year : this.today.getFullYear(),
+			month: this.today.getMonth() + 1,
 			moveTime: 700,
 			events: [],
 			callback: callback || this.callback,
@@ -69,15 +72,18 @@ return ({
 		}
 		var self = this;
 		var list = function(className, number, text) {
-			var a = $('<a />').text(text);
-			a.attr('href', 'javascript:void(0)');
-			a.click(function() {
-				self.move(number);
-				return false;
-			});
-			return $('<li />').addClass(className).append(a);
+			var date = new Date(self.option.year, (self.option.month + number) - 1, 1);
+			var link = $('<a />')
+				.text(text)
+				.attr('href', 'javascript:void(0)')
+				.click(function() {
+					self.move(number);
+					return false;
+				});
+			return $('<li />').addClass(className).append(link);
 		};
-		var text = this.option.navi[this.option.lang];
+		var text = typeof this.option.navi === 'object'
+			? this.option.navi[this.option.lang] : this.option.navi;
 		this.elem.append(
 			$('<ul />')
 				.addClass('navi')
@@ -97,9 +103,11 @@ return ({
 		this.thead = $('thead:first', this.table);
 		if (this.thead.size() < 1 || $('th', this.thead).size() < 1) {
 			var week = [];
-			for (var i = 0, wd; wd = this.weekDay[this.option.lang][i]; i++) {
+			var weekName = typeof this.option.week === 'object'
+				? this.option.week[this.option.lang] : this.option.week;
+			for (var i = 0, wd; wd = weekName[i]; i++) {
 				week[week.length] = [
-					'<th class="', this.weekDay.name[i], '">', wd , '</td>'
+					'<th class="', this.weekName[i], '">', wd , '</td>'
 				].join('');
 			}
 			this.thead = $('<thead />').append(this.tr.clone().html(week.join('')))
@@ -195,7 +203,7 @@ return ({
 		        : this.getKey(date);
 		this.view[key] = this.td.clone()
 			.addClass(className)
-			.addClass(this.weekDay.name[date.getDay()]);
+			.addClass(this.weekName[date.getDay()]);
 		// White space for (IE <= 7) "empty-cells" fix
 		return this.view[key].text(hide ? ' ' : date.getDate());
 	},
@@ -244,13 +252,17 @@ return ({
 		if (!this.option.caption) {
 			return this;
 		}
-		var date = this.getKey(this.current).split('-');
-		this.caption.text(
-			this.option.caption
-				.replace(/%Y/i, date[0])
-				.replace(/%M/i, date[1])
-		);
+		this.caption.text(this.getCaption(this.current));
 		return this;
+	},
+
+	getCaption: function(date) {
+		date = this.getKey(date).split('-');
+		var caption = typeof this.option.caption === 'object'
+			? this.option.caption[this.option.lang] : this.option.caption;
+		return caption
+			.replace(/%Y/i, date[0])
+			.replace(/%M/i, date[1])
 	},
 
 	move: function(number) {
