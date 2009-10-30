@@ -234,10 +234,10 @@ Calendar.prototype = {
 
 	addEvent: function() {
 		var self = this;
-		$.each(self.option.events, function() {
-			var td = self.view[self.getKey(this.date)];
+		$.each(self.option.events, function(date, event) {
+			var td = self.view[self.getKey(date)];
 			if (typeof td !== 'undefined') {
-				self.option.callback(td, this);
+				self.option.callback(td, event);
 			}
 		});
 		return this;
