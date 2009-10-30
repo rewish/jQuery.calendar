@@ -72,7 +72,9 @@ Calendar.prototype = {
 			events: [],
 			callback: callback || this.callback,
 			hideOtherMonth: false,
-			cssClass: 'jqueryCalendar'
+			cssClass: 'jqueryCalendar',
+			beforeMove: function() {},
+			afterMove : function() {}
 		}, option);
 		return this;
 	},
@@ -292,6 +294,7 @@ Calendar.prototype = {
 		});
 		// Month change
 		self.option.month = self.option.month + number;
+		self.option.beforeMove(self.option, number); // Callback
 		self.rebuild().show();
 		// Moving animation
 		var time = self.option.moveTime;
@@ -312,6 +315,7 @@ Calendar.prototype = {
 			clone.remove();
 			self.elem.css('position', 'static');
 		});
+		self.option.afterMove(self.option, number); // Callback
 	},
 
 	callback: function(td, evt) {
