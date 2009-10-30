@@ -8,14 +8,16 @@
  */
 jQuery.fn.calendar = function(option, callback) {
 
-var $ = jQuery, NAMESPACE = 'jqueryCalendar';
+var $ = jQuery;
 
 return ({
 	weekName: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
 
 	init: function(elem, option, callback) {
+		this.today = new Date;
+		this.setOption(option, callback)
 		this.elem = $('<div />')
-			.addClass(NAMESPACE)
+			.addClass(this.option.namespace)
 			.html(elem.html());
 		this.elem.css('z-index', 2);
 		this.wrap = $('<div />').append(this.elem);
@@ -24,10 +26,8 @@ return ({
 			overflow: 'hidden'
 		});
 		elem.html('').append(this.wrap);
-		this.today = new Date;
 		this.view  = {};
 		return this
-			.setOption(option, callback)
 			.createNavi()
 			.createTable()
 			.createCaption()
@@ -61,7 +61,8 @@ return ({
 			moveTime: 700,
 			events: [],
 			callback: callback || this.callback,
-			hideOtherMonth: false
+			otherMonth: false,
+			namespace: 'jqueryCalendar'
 		}, option);
 		return this;
 	},
