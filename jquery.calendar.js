@@ -8,11 +8,13 @@
  */
 (function($) {
 
-jQuery.fn.calendar = function(option, callback) {
+$.fn.calendar = function(option, callback) {
 	return this.each(function() {
 		new Calendar($(this), option, callback);
 	});
 };
+
+var today = new Date;
 
 var Calendar = function(elem, option, callback) {
 	this.init(elem, option, callback).build().show();
@@ -22,7 +24,7 @@ Calendar.prototype = {
 	weekName: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
 
 	init: function(elem, option, callback) {
-		this.today = new Date;
+		this.today = today;
 		this.setOption(option, callback)
 		this.elem = $('<div />')
 			.addClass(this.option.namespace)
@@ -34,7 +36,7 @@ Calendar.prototype = {
 			overflow: 'hidden'
 		});
 		elem.html('').append(this.wrap);
-		this.view  = {};
+		this.view = {};
 		return this
 			.createNavi()
 			.createTable()
@@ -69,7 +71,7 @@ Calendar.prototype = {
 			moveTime: 700,
 			events: [],
 			callback: callback || this.callback,
-			otherMonth: false,
+			hideOtherMonth: false,
 			namespace: 'jqueryCalendar'
 		}, option);
 		return this;
