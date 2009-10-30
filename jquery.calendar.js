@@ -27,7 +27,7 @@ Calendar.prototype = {
 		this.today = today;
 		this.setOption(option, callback)
 		this.elem = $('<div />')
-			.addClass(this.option.namespace)
+			.addClass(this.option.cssClass)
 			.html(elem.html());
 		this.elem.css('z-index', 2);
 		this.wrap = $('<div />').append(this.elem);
@@ -72,7 +72,7 @@ Calendar.prototype = {
 			events: [],
 			callback: callback || this.callback,
 			hideOtherMonth: false,
-			namespace: 'jqueryCalendar'
+			cssClass: 'jqueryCalendar'
 		}, option);
 		return this;
 	},
