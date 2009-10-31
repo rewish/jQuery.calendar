@@ -71,11 +71,13 @@ Calendar.prototype = {
 			month: this.today.getMonth() + 1,
 			moveTime: 700,
 			events: {},
-			addEvent: this.addEventCallback,
 			hideOther: false,
 			cssClass: 'jqueryCalendar',
-			beforeMove: function() {},
-			afterMove : function() {},
+			// Callback functions
+			addDay      : function() {},
+			addEvent    : this.addEventCallback,
+			beforeMove  : function() {},
+			afterMove   : function() {},
 			preloadEvent: function() {}
 		}, option);
 		return this;
@@ -173,8 +175,7 @@ Calendar.prototype = {
 		var last = new Date(this.option.year, this.option.month, 0).getDate();
 		for (var day = 1; day <= last; day++) {
 			this.current.setDate(day);
-			this.addDay(this.current, 'currentMonth')
-				.attr('id', ['calendar', this.getKey(this.current)].join('-'));
+			this.option.addDay(this.addDay(this.current, 'currentMonth'));
 		}
 		this.nextFill();
 		this.addEvent();
@@ -220,7 +221,11 @@ Calendar.prototype = {
 			.addClass(className)
 			.addClass(this.weekName[date.getDay()]);
 		// White space for (IE <= 7) "empty-cells" fix
-		return this.view[key].text(hide ? ' ' : date.getDate());
+		this.view[key].text(hide ? ' ' : date.getDate());
+		if (key !== 'otherMonth') {
+			this.view[key].attr('id', ['calendar', this.getKey(date)].join('-'));
+		}
+		return this.view[key];
 	},
 
 	getKey: function(date) {
@@ -239,7 +244,7 @@ Calendar.prototype = {
 		$.each(self.option.events, function(date, event) {
 			var td = self.view[self.getKey(date)];
 			try {
-				self.option.callback(td, event);
+				self.option.addEvent(td, event);
 			} catch(e) {}
 		});
 		return this;
