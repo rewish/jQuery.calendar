@@ -54,7 +54,9 @@ Calendar.prototype = {
 			return this;
 		}
 		this.option = $.extend({
-			lang: 'ja',
+			lang : 'ja',
+			year : this.today.getFullYear(),
+			month: this.today.getMonth() + 1,
 			week: {
 				en  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 				ja  : ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
@@ -67,12 +69,14 @@ Calendar.prototype = {
 				en: ['<<Prev', 'Next>>'],
 				ja: ['<<\u524d\u306e\u6708', '\u6b21\u306e\u6708>>']
 			},
-			year : this.today.getFullYear(),
-			month: this.today.getMonth() + 1,
-			moveTime: 700,
-			events: {},
+			todayLink: {
+				en: 'Today [%Y-%M-%D]',
+				ja: '\u4eca\u65e5 [%Y\u5e74%M\u6708%D\u65e5]'
+			},
+			moveTime : 700,
+			events   : {},
 			hideOther: false,
-			cssClass: 'jqueryCalendar',
+			cssClass : 'jqueryCalendar',
 			// Callback functions
 			addDay      : function() {},
 			addEvent    : this.addEventCallback,
@@ -154,11 +158,19 @@ Calendar.prototype = {
 	},
 
 	createTodayLink: function() {
+		var date = this.getKey(this.today).split('-');
+		var linkText = typeof this.option.todayLink === 'object'
+			? this.option.todayLink[this.option.lang] : this.option.todayLink;
 		var self = this;
 		this.table.after(
 			$('<div />').addClass('todayLink').append(
 				$('<a />')
-					.text(['Today [', self.getKey(self.today), ']'].join(''))
+					.text(
+						linkText
+							.replace(/%Y/i, date[0])
+							.replace(/%M/i, date[1])
+							.replace(/%D/i, date[2])
+					)
 					.attr('href', 'javascript:void(0)')
 					.click(function() {
 						self.option.month = self.today.getMonth() + 1;
