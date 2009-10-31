@@ -37,6 +37,7 @@ Calendar.prototype = {
 		});
 		elem.html('').append(this.wrap);
 		this.view = {};
+		this.preloadEvents = {};
 		return this
 			.createNavi()
 			.createTable()
@@ -69,12 +70,13 @@ Calendar.prototype = {
 			year : this.today.getFullYear(),
 			month: this.today.getMonth() + 1,
 			moveTime: 700,
-			events: [],
+			events: {},
 			callback: callback || this.callback,
-			hideOtherMonth: false,
+			hideOther: false,
 			cssClass: 'jqueryCalendar',
 			beforeMove: function() {},
-			afterMove : function() {}
+			afterMove : function() {},
+			preloadEvent: function() {}
 		}, option);
 		return this;
 	},
@@ -193,7 +195,7 @@ Calendar.prototype = {
 		if (last - day >= 6) return this;
 		for (; day <= last; day++) {
 			prev.setDate(day);
-			this.addDay(prev, 'otherMonth', this.option.hideOtherMonth);
+			this.addDay(prev, 'otherMonth', this.option.hideOther);
 		}
 		return this;
 	},
@@ -205,7 +207,7 @@ Calendar.prototype = {
 		if (last >= 7) return this;
 		for (var day = 1; day <= last; day++) {
 			next.setDate(day);
-			this.addDay(next, 'otherMonth', this.option.hideOtherMonth);
+			this.addDay(next, 'otherMonth', this.option.hideOther);
 		}
 		return this;
 	},
@@ -236,9 +238,9 @@ Calendar.prototype = {
 		var self = this;
 		$.each(self.option.events, function(date, event) {
 			var td = self.view[self.getKey(date)];
-			if (typeof td !== 'undefined') {
+			try {
 				self.option.callback(td, event);
-			}
+			} catch(e) {}
 		});
 		return this;
 	},
@@ -258,7 +260,12 @@ Calendar.prototype = {
 			tr.append(this);
 			count++;
 		});
-		return this.setCaption();
+		this.setCaption();
+		try {
+			var date = this.getKey(this.current).split('-');
+			this.preloadEvents = this.option.preloadEvent(date[0], date[1]);
+		} catch(e) {}
+		return this;
 	},
 
 	setCaption: function() {
@@ -295,6 +302,8 @@ Calendar.prototype = {
 		// Month change
 		self.option.month = self.option.month + number;
 		self.option.beforeMove(self.option, number); // Callback
+		// Set Event
+		self.setPreloadEvent(number);
 		self.rebuild().show();
 		// Moving animation
 		var time = self.option.moveTime;
@@ -316,6 +325,15 @@ Calendar.prototype = {
 			self.elem.css('position', 'static');
 		});
 		self.option.afterMove(self.option, number); // Callback
+	},
+
+	setPreloadEvent: function(number) {
+		var type = number === 1 ? 'next' : 'prev';
+		try {
+			if (typeof this.preloadEvents[type] === 'object') {
+				this.option.events = this.preloadEvents[type];
+			}
+		} catch(e) {}
 	},
 
 	callback: function(td, evt) {
