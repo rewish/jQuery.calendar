@@ -8,24 +8,24 @@
  */
 (function($) {
 
-$.fn.calendar = function(option, callback) {
+$.fn.calendar = function(option) {
 	return this.each(function() {
-		new Calendar($(this), option, callback);
+		new Calendar($(this), option);
 	});
 };
 
 var today = new Date;
 
-var Calendar = function(elem, option, callback) {
-	this.init(elem, option, callback).build().show();
+var Calendar = function(elem, option) {
+	this.init(elem, option).build().show();
 };
 
 Calendar.prototype = {
 	weekName: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
 
-	init: function(elem, option, callback) {
+	init: function(elem, option) {
 		this.today = today;
-		this.setOption(option, callback)
+		this.setOption(option)
 		this.elem = $('<div />')
 			.addClass(this.option.cssClass)
 			.html(elem.html());
@@ -45,7 +45,7 @@ Calendar.prototype = {
 			.createTodayLink();
 	},
 
-	setOption: function(option, callback) {
+	setOption: function(option) {
 		if (this.option && !option) {
 			return this;
 		}
@@ -71,7 +71,7 @@ Calendar.prototype = {
 			month: this.today.getMonth() + 1,
 			moveTime: 700,
 			events: {},
-			callback: callback || this.callback,
+			addEvent: this.addEventCallback,
 			hideOther: false,
 			cssClass: 'jqueryCalendar',
 			beforeMove: function() {},
@@ -336,7 +336,7 @@ Calendar.prototype = {
 		} catch(e) {}
 	},
 
-	callback: function(td, evt) {
+	addEventCallback: function(td, evt) {
 		var e = typeof evt.url != 'undefined'
 			? $('<a />').attr('href', evt.url)
 			: $('<span />');
