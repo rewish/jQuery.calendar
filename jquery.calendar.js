@@ -1,7 +1,7 @@
 /**
  * jQuery.calendar
  *
- * @version  0.4
+ * @version  0.4.1
  * @author   rew <rewish.org@gmail.com>
  * @link     http://rewish.org/
  * @license  http://rewish.org/license/mit The MIT License
@@ -26,16 +26,14 @@ Calendar.prototype = {
 
 	init: function(elem, option) {
 		this.setOption(option);
-		this.elem = $('<div />')
-			.addClass(this.option.cssClass)
-			.html(elem.html());
+		this.elem = $('<div />').addClass(this.option.cssClass);
 		this.elem.css('z-index', 2);
 		this.wrap = $('<div />').append(this.elem);
 		this.wrap.css({
 			position: 'relative',
 			overflow: 'hidden'
 		});
-		elem.html('').append(this.wrap);
+		elem.append(this.wrap);
 		this.view = {};
 		this.preloadEvents = {};
 		return this
@@ -118,24 +116,19 @@ Calendar.prototype = {
 		this.tr = $('<tr />');
 		this.td = $('<td />');
 		// table
-		this.table = $('table:first', this.elem);
-		this.table = this.table.size() > 0 ? this.table : $('<table />');
+		this.table = $('<table />');
 		// thead
-		this.thead = $('thead:first', this.table);
-		if (this.thead.size() < 1 || $('th', this.thead).size() < 1) {
-			var week = [];
-			var weekName = typeof this.option.week === 'object'
-				? this.option.week[this.option.lang] : this.option.week;
-			for (var i = 0, wd; wd = weekName[i]; i++) {
-				week[week.length] = [
-					'<th class="', this.weekName[i], '">', wd , '</td>'
-				].join('');
-			}
-			this.thead = $('<thead />').append(this.tr.clone().html(week.join('')))
+		var week = [];
+		var weekName = typeof this.option.week === 'object'
+			? this.option.week[this.option.lang] : this.option.week;
+		for (var i = 0, wd; wd = weekName[i]; i++) {
+			week[week.length] = [
+				'<th class="', this.weekName[i], '">', wd , '</td>'
+			].join('');
 		}
+		this.thead = $('<thead />').append(this.tr.clone().html(week.join('')))
 		// tbody
-		this.tbody = $('tbody:first', this.table);
-		this.tbody = (this.tbody.size() > 0 ? this.tbody : $('<tbody />')).empty();
+		this.tbody = $('<tbody />');
 		this.elem.append(
 			$('<div />')
 				.addClass('main')
