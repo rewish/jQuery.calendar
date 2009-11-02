@@ -167,7 +167,7 @@ Calendar.prototype = {
 					.attr('href', 'javascript:void(0)')
 					.click(function() {
 						self.option.month = self.today.getMonth() + 1;
-						self.rebuild().show();
+						self.rebuild().show().resetWrap();
 					})
 			)
 		);
@@ -305,10 +305,8 @@ Calendar.prototype = {
 			left: pos.left + 'px',
 			zIndex: 1
 		});
-		self.wrap.append(clone).css({
-			width: width + 'px',
-			height: self.elem.innerHeight()
-		});
+		self.resetWrap();
+		self.wrap.append(clone);
 		// Month change
 		self.option.month = self.option.month + number;
 		self.option.beforeMove(self.option, number); // Callback
@@ -335,6 +333,14 @@ Calendar.prototype = {
 			self.elem.css('position', 'static');
 		});
 		self.option.afterMove(self.option, number); // Callback
+	},
+
+	resetWrap: function() {
+		this.wrap.css({
+			width : this.elem.innerWidth()  + 'px',
+			height: this.elem.innerHeight() + 'px'
+		});
+		return this;
 	},
 
 	setPreloadEvent: function(number) {
