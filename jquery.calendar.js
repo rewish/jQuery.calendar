@@ -77,7 +77,19 @@ Calendar.prototype = {
 			cssClass : 'jqueryCalendar',
 			// Callback functions
 			addDay      : function() {},
-			addEvent    : this.addEventCallback,
+			addEvent    : function(td, evt) {
+				var elem = typeof evt.url != 'undefined'
+					? $('<a />').attr('href', evt.url)
+					: $('<span />');
+				if (evt.id) {
+					elem.attr('id', 'event-' + evt.id);
+				}
+				if (evt.title) {
+					elem.attr('title', evt.title);
+				}
+				elem.text(td.text());
+				td.text('').append(elem).addClass('event');
+			},
 			beforeMove  : function() {},
 			afterMove   : function() {},
 			preloadEvent: function() {}
@@ -350,20 +362,6 @@ Calendar.prototype = {
 				this.option.events = this.preloadEvents[type];
 			}
 		} catch(e) {}
-	},
-
-	addEventCallback: function(td, evt) {
-		var e = typeof evt.url != 'undefined'
-			? $('<a />').attr('href', evt.url)
-			: $('<span />');
-		if (evt.id) {
-			e.attr('id', 'event-' + evt.id);
-		}
-		if (evt.title) {
-			e.attr('title', evt.title);
-		}
-		e.text(td.text());
-		td.text('').append(e).addClass('event');
 	}
 };
 
