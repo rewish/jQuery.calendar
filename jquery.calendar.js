@@ -17,6 +17,7 @@ $.fn.calendar = function(option) {
 var today = new Date;
 
 var Calendar = function(elem, option) {
+	this.today = today;
 	this.init(elem, option).build().show();
 };
 
@@ -24,8 +25,7 @@ Calendar.prototype = {
 	weekName: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
 
 	init: function(elem, option) {
-		this.today = today;
-		this.setOption(option)
+		this.setOption(option);
 		this.elem = $('<div />')
 			.addClass(this.option.cssClass)
 			.html(elem.html());
@@ -58,16 +58,16 @@ Calendar.prototype = {
 			year : this.today.getFullYear(),
 			month: this.today.getMonth() + 1,
 			week: {
-				en  : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-				ja  : ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
+				en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+				ja: ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
 			},
 			caption: {
 				en: '%Y-%M',
 				ja: '%Y\u5e74%M\u6708'
 			},
 			navi: {
-				en: ['<<Prev', 'Next>>'],
-				ja: ['<<\u524d\u306e\u6708', '\u6b21\u306e\u6708>>']
+				en: ['Prev', 'Next'],
+				ja: ['\u524d\u306e\u6708', '\u6b21\u306e\u6708']
 			},
 			todayLink: {
 				en: 'Today [%Y-%M-%D]',
