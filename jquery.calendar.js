@@ -1,7 +1,7 @@
 /**
  * jQuery.calendar
  *
- * @version  0.4.1
+ * @version  1.0.0
  * @author   rew <rewish.org@gmail.com>
  * @link     http://rewish.org/
  * @license  http://rewish.org/license/mit The MIT License
