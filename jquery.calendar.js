@@ -370,13 +370,14 @@ Calendar.prototype = {
 
 	setPreloadEvent: function(number) {
 		var type = number === 1 ? 'next' : 'prev';
-		if (typeof this.preloadEvents[type] === 'object') {
-			return this.option.events = this.preloadEvents[type];
-		}
-		if (typeof this.preloadEvents === 'object') {
-			return this.option.events = this.preloadEvents;
-		}
-		return this.option.events = {};
+		try {
+			if (typeof this.preloadEvents[type] === 'object') {
+				return this.option.events = this.preloadEvents[type];
+			}
+			if (typeof this.preloadEvents === 'object') {
+				return this.option.events = this.preloadEvents;
+			}
+		} catch(e) {}
 	}
 };
 
