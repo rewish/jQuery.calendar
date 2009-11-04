@@ -357,11 +357,13 @@ Calendar.prototype = {
 
 	setPreloadEvent: function(number) {
 		var type = number === 1 ? 'next' : 'prev';
-		try {
-			if (typeof this.preloadEvents[type] === 'object') {
-				this.option.events = this.preloadEvents[type];
-			}
-		} catch(e) {}
+		if (typeof this.preloadEvents[type] === 'object') {
+			return this.option.events = this.preloadEvents[type];
+		}
+		if (typeof this.preloadEvents === 'object') {
+			return this.option.events = this.preloadEvents;
+		}
+		return this.option.events = {};
 	}
 };
 
