@@ -245,15 +245,19 @@ Calendar.prototype = {
 		return this.view[key];
 	},
 
-	getKey: function(date) {
+	getKey: function(date, returnArray) {
 		if (typeof date === 'string') {
 			date = date.split('-');
 		}
-		return [
+		var key = [
 			date[0] || date.getFullYear(),
 			('0' + (date[1] || date.getMonth() + 1)).slice(-2),
 			('0' + (date[2] || date.getDate())).slice(-2)
-		].join('-')
+		];
+		if (returnArray === true) {
+			return key;
+		}
+		return key.join('-')
 	},
 
 	addEvent: function() {
@@ -308,43 +312,52 @@ Calendar.prototype = {
 	},
 
 	move: function(number) {
-		var self  = this;
-		var width = self.elem.innerWidth();
-		var pos   = self.elem.position();
-		var clone = self.elem.clone().css({
+		var width = this.elem.innerWidth();
+		var pos   = this.elem.position();
+		var clone = this.elem.clone().css({
 			position: 'absolute',
 			top: pos.top + 'px',
 			left: pos.left + 'px',
 			zIndex: 1
 		});
-		self.resetWrap();
-		self.wrap.append(clone);
+		this.resetWrap();
+		this.wrap.append(clone);
+
 		// Month change
-		self.option.month = self.option.month + number;
-		self.option.beforeMove(self.option, number); // Callback
+		this.option.month = this.option.month + number;
+
+		// Before callback
+		var date = new Date(this.option.year, this.option.month - 1, 1);
+		date = this.getKey(date, true);
+		this.option.beforeMove(this.option, date[0], date[1]);
+
 		// Set Event
-		self.setPreloadEvent(number);
-		self.rebuild().show();
+		this.setPreloadEvent(number);
+		this.rebuild().show();
+
 		// Moving animation
-		var time = self.option.moveTime;
-		self.wrap.animate({height: self.elem.innerHeight()}, time);
+		var time = this.option.moveTime;
+		this.wrap.animate({height: this.elem.innerHeight()}, time);
+
 		// Next moving
 		if ((number + '').charAt(0) !== '-') {
 			clone.animate({marginLeft: '-' + width + 'px'}, time, function() {
 				clone.remove();
 			});
-			return;
-		}
+
 		// Prev moving
-		self.elem.css({
-			position: 'absolute',
-			marginLeft: '-' + width + 'px'
-		});
-		self.elem.animate({marginLeft: 0}, time, function() {
-			clone.remove();
-			self.elem.css('position', 'static');
-		});
-		self.option.afterMove(self.option, number); // Callback
+		} else {
+			this.elem.css({
+				position: 'absolute',
+				marginLeft: '-' + width + 'px'
+			});
+			var self = this;
+			this.elem.animate({marginLeft: 0}, time, function() {
+				clone.remove();
+				self.elem.css('position', 'static');
+			});
+		}
+		this.option.afterMove(this.option, date[0], date[1]); // Callback
 	},
 
 	resetWrap: function() {
