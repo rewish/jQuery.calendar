@@ -3,7 +3,7 @@
  *
  * @version  1.0.0
  * @author   rew <rewish.org@gmail.com>
- * @link     http://rewish.org/
+ * @link     http://rewish.org/javascript/jquery_calendar
  * @license  http://rewish.org/license/mit The MIT License
  */
 (function($) {
@@ -14,15 +14,16 @@ $.fn.calendar = function(option) {
 	});
 };
 
+var weekName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 var today = new Date;
 
 var Calendar = function(elem, option) {
-	this.today = today;
 	this.init(elem, option).build().show();
 };
 
 Calendar.prototype = {
-	weekName: ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'],
+	weekName: weekName,
+	today: today,
 
 	init: function(elem, option) {
 		this.setOption(option);
