@@ -17,4 +17,6 @@ jQuery(function($) {
 		}
 	});
 
+	$('#example').calendar();
+
 });

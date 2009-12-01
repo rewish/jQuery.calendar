@@ -1,7 +1,7 @@
 /**
  * jQuery.calendar
  *
- * @version  1.0.0
+ * @version  1.0.1
  * @author   rew <rewish.org@gmail.com>
  * @link     http://rewish.org/javascript/jquery_calendar
  * @license  http://rewish.org/license/mit The MIT License
@@ -10,30 +10,28 @@
 
 $.fn.calendar = function(option) {
 	return this.each(function() {
-		new Calendar($(this), option);
+		(new Calendar).init($(this), option).build().show();
 	});
 };
 
-var weekName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-var today = new Date;
+var __weekName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+var __today = new Date;
 
-var Calendar = function(elem, option) {
-	this.init(elem, option).build().show();
-};
-
+function Calendar() {};
 Calendar.prototype = {
-	weekName: weekName,
-	today: today,
-
 	init: function(elem, option) {
 		this.setOption(option);
-		this.elem = $('<div />').addClass(this.option.cssClass);
-		this.elem.css('z-index', 2);
-		this.wrap = $('<div />').append(this.elem);
-		this.wrap.css({
-			position: 'relative',
-			overflow: 'hidden'
-		});
+		this.elem = $('<div />')
+			.addClass(this.option.cssClass)
+			.css('z-index', 2)
+		;
+		this.wrap = $('<div />')
+			.append(this.elem)
+			.css({
+				position: 'relative',
+				overflow: 'hidden'
+			})
+		;
 		elem.append(this.wrap);
 		this.view = {};
 		this.preloadEvents = {};
@@ -54,8 +52,8 @@ Calendar.prototype = {
 		}
 		this.option = $.extend({
 			lang : 'ja',
-			year : this.today.getFullYear(),
-			month: this.today.getMonth() + 1,
+			year : __today.getFullYear(),
+			month: __today.getMonth() + 1,
 			week: {
 				en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 				ja: ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
@@ -77,8 +75,8 @@ Calendar.prototype = {
 			hideOther: false,
 			cssClass : 'jqueryCalendar',
 			// Callback functions
-			addDay      : function() {},
-			addEvent    : function(td, evt) {
+			addDay  : function() {},
+			addEvent: function(td, evt) {
 				var elem = typeof evt.url != 'undefined'
 					? $('<a />').attr('href', evt.url)
 					: $('<span />');
@@ -132,11 +130,10 @@ Calendar.prototype = {
 		this.table = $('<table />');
 		// thead
 		var week = [];
-		var weekName = typeof this.option.week === 'object'
-			? this.option.week[this.option.lang] : this.option.week;
-		for (var i = 0, wd; wd = weekName[i]; i++) {
+		var weekName = this.option.week[this.option.lang] || this.option.week;
+		for (var i = 0, w; w = weekName[i]; i++) {
 			week[week.length] = [
-				'<th class="', this.weekName[i], '">', wd , '</td>'
+				'<th class="', __weekName[i], '">', w , '</td>'
 			].join('');
 		}
 		this.thead = $('<thead />').append(this.tr.clone().html(week.join('')))
@@ -164,7 +161,7 @@ Calendar.prototype = {
 	},
 
 	createTodayLink: function() {
-		var date = this.getKey(this.today).split('-');
+		var date = this.getKey(__today).split('-');
 		var linkText = typeof this.option.todayLink === 'object'
 			? this.option.todayLink[this.option.lang] : this.option.todayLink;
 		var self = this;
@@ -179,7 +176,7 @@ Calendar.prototype = {
 					)
 					.attr('href', 'javascript:void(0)')
 					.click(function() {
-						self.option.month = self.today.getMonth() + 1;
+						self.option.month = __today.getMonth() + 1;
 						self.rebuild().show().resetWrap();
 					})
 			)
@@ -237,7 +234,7 @@ Calendar.prototype = {
 		        : this.getKey(date);
 		this.view[key] = this.td.clone()
 			.addClass(className)
-			.addClass(this.weekName[date.getDay()]);
+			.addClass(__weekName[date.getDay()]);
 		// White space for (IE <= 7) "empty-cells" fix
 		this.view[key].text(hide ? ' ' : date.getDate());
 		if (key !== 'otherMonth') {
@@ -273,7 +270,7 @@ Calendar.prototype = {
 	},
 
 	show: function() {
-		var today = this.getKey(this.today), tr, count = 0, self = this;
+		var today = this.getKey(__today), tr, count = 0, self = this;
 		$.each(self.view, function(key) {
 			if (count % 7 === 0 || count === 0) {
 				tr = count % 2 == 0
