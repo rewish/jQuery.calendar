@@ -36,10 +36,10 @@ Calendar.prototype = {
 		this.view = {};
 		this.preloadEvents = {};
 		return this
-			.createNavi()
-			.createTable()
-			.createCaption()
-			.createTodayLink();
+			.buildNavi()
+			.buildTable()
+			.buildCaption()
+			.buildTodayLink();
 	},
 
 	setOption: function(option) {
@@ -96,7 +96,7 @@ Calendar.prototype = {
 		return this;
 	},
 
-	createNavi: function() {
+	buildNavi: function() {
 		if (!this.option.navi) {
 			return this;
 		}
@@ -123,7 +123,7 @@ Calendar.prototype = {
 		return this;
 	},
 
-	createTable: function() {
+	buildTable: function() {
 		this.tr = $('<tr />');
 		this.td = $('<td />');
 		// table
@@ -152,7 +152,7 @@ Calendar.prototype = {
 		return this;
 	},
 
-	createCaption: function() {
+	buildCaption: function() {
 		if (this.option.caption && !this.caption) {
 			this.caption = $('<div />').addClass('caption');
 			this.table.before(this.caption);
@@ -160,7 +160,7 @@ Calendar.prototype = {
 		return this;
 	},
 
-	createTodayLink: function() {
+	buildTodayLink: function() {
 		var date = this.getKey(__today).split('-');
 		var linkText = typeof this.option.todayLink === 'object'
 			? this.option.todayLink[this.option.lang] : this.option.todayLink;
@@ -321,7 +321,7 @@ Calendar.prototype = {
 		this.resetWrap();
 		this.wrap.append(clone);
 
-		// Month change
+		// Changing month
 		this.option.month = this.option.month + number;
 
 		// Before callback
