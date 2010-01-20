@@ -1,7 +1,7 @@
 /**
  * jQuery.calendar
  *
- * @version  1.0.1
+ * @version  1.0.2
  * @author   rew <rewish.org@gmail.com>
  * @link     http://rewish.org/javascript/jquery_calendar
  * @license  http://rewish.org/license/mit The MIT License
@@ -176,6 +176,7 @@ Calendar.prototype = {
 					)
 					.attr('href', 'javascript:void(0)')
 					.click(function() {
+						self.option.year  = __today.getFullYear();
 						self.option.month = __today.getMonth() + 1;
 						self.rebuild().show().resetWrap();
 					})
