@@ -1,7 +1,7 @@
 /**
  * jQuery.calendar
  *
- * @version  1.0.2
+ * @version  1.0.3
  * @author   rew <rewish.org@gmail.com>
  * @link     http://rewish.org/javascript/jquery_calendar
  * @license  http://rewish.org/license/mit The MIT License
@@ -17,15 +17,16 @@ $.fn.calendar = function(option) {
 var __weekName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 var __today = new Date;
 
-function Calendar() {};
+function Calendar() {}
+
 Calendar.prototype = {
 	init: function(elem, option) {
 		this.setOption(option);
-		this.elem = $('<div />')
+		this.elem = $('<div/>')
 			.addClass(this.option.cssClass)
 			.css('z-index', 2)
 		;
-		this.wrap = $('<div />')
+		this.wrap = $('<div/>')
 			.append(this.elem)
 			.css({
 				position: 'relative',
@@ -77,9 +78,8 @@ Calendar.prototype = {
 			// Callback functions
 			addDay  : function() {},
 			addEvent: function(td, evt) {
-				var elem = typeof evt.url != 'undefined'
-					? $('<a />').attr('href', evt.url)
-					: $('<span />');
+				var elem = typeof evt.url !== 'undefined'
+					? $('<a/>').attr('href', evt.url) : $('<span/>');
 				if (evt.id) {
 					elem.attr('id', 'event-' + evt.id);
 				}
@@ -103,44 +103,42 @@ Calendar.prototype = {
 		var self = this;
 		var list = function(className, number, text) {
 			var date = new Date(self.option.year, (self.option.month + number) - 1, 1);
-			var link = $('<a />')
+			var link = $('<a/>')
 				.text(text)
 				.attr('href', 'javascript:void(0)')
 				.click(function() {
 					self.move(number);
 					return false;
 				});
-			return $('<li />').addClass(className).append(link);
+			return $('<li/>').addClass(className).append(link);
 		};
 		var text = typeof this.option.navi === 'object'
 			? this.option.navi[this.option.lang] : this.option.navi;
 		this.elem.append(
-			$('<ul />')
+			$('<ul/>')
 				.addClass('navi')
-				.append(list('prev', -1, text[0]))
-				.append(list('next',  1, text[1]))
+				.append(list('prev', -1, text[0]),
+				        list('next',  1, text[1]))
 		);
 		return this;
 	},
 
 	buildTable: function() {
-		this.tr = $('<tr />');
-		this.td = $('<td />');
+		this.tr = $('<tr/>');
+		this.td = $('<td/>');
 		// table
-		this.table = $('<table />');
+		this.table = $('<table/>');
 		// thead
 		var week = [];
 		var weekName = this.option.week[this.option.lang] || this.option.week;
 		for (var i = 0, w; w = weekName[i]; i++) {
-			week[week.length] = [
-				'<th class="', __weekName[i], '">', w , '</td>'
-			].join('');
+			week[week.length] = '<th class="'+ __weekName[i] +'">'+ w +'</td>';
 		}
-		this.thead = $('<thead />').append(this.tr.clone().html(week.join('')))
+		this.thead = $('<thead/>').append(this.tr.clone().html(week.join('')))
 		// tbody
-		this.tbody = $('<tbody />');
+		this.tbody = $('<tbody/>');
 		this.elem.append(
-			$('<div />')
+			$('<div/>')
 				.addClass('main')
 				.append(
 					this.table
@@ -154,7 +152,7 @@ Calendar.prototype = {
 
 	buildCaption: function() {
 		if (this.option.caption && !this.caption) {
-			this.caption = $('<div />').addClass('caption');
+			this.caption = $('<div/>').addClass('caption');
 			this.table.before(this.caption);
 		}
 		return this;
@@ -166,8 +164,8 @@ Calendar.prototype = {
 			? this.option.todayLink[this.option.lang] : this.option.todayLink;
 		var self = this;
 		this.table.after(
-			$('<div />').addClass('todayLink').append(
-				$('<a />')
+			$('<div/>').addClass('todayLink').append(
+				$('<a/>')
 					.text(
 						linkText
 							.replace(/%Y/i, date[0])
@@ -274,7 +272,7 @@ Calendar.prototype = {
 		var today = this.getKey(__today), tr, count = 0, self = this;
 		$.each(self.view, function(key) {
 			if (count % 7 === 0 || count === 0) {
-				tr = count % 2 == 0
+				tr = count % 2 === 0
 				   ? self.tr.clone().addClass('even')
 				   : self.tr.clone().addClass('odd');
 				self.tbody.append(tr);
