@@ -17,6 +17,14 @@ jQuery(function($) {
 		}
 	});
 
-	$('#example').calendar();
+	// callback
+	$('#example').calendar({
+		addDay: function(td) {
+			var now = [this.year, this.month, this.day].join('-');
+			td.click(function() {
+				alert(now);
+			});
+		}
+	});
 
 });

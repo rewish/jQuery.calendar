@@ -189,8 +189,10 @@ Calendar.prototype = {
 		var last = new Date(this.option.year, this.option.month, 0).getDate();
 		for (var day = 1; day <= last; day++) {
 			this.current.setDate(day);
+			this.option.day = day;
 			this.option.addDay(this.addDay(this.current, 'currentMonth'));
 		}
+		this.option.day = null;
 		this.nextFill();
 		this.addEvent();
 		return this;
