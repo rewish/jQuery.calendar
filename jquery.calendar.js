@@ -14,8 +14,8 @@ $.fn.calendar = function(option) {
 	});
 };
 
-var __weekName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-var __today = new Date;
+var _weekName = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+var _today = new Date;
 
 function Calendar() {}
 
@@ -53,8 +53,8 @@ Calendar.prototype = {
 		}
 		this.option = $.extend({
 			lang : 'ja',
-			year : __today.getFullYear(),
-			month: __today.getMonth() + 1,
+			year : _today.getFullYear(),
+			month: _today.getMonth() + 1,
 			week: {
 				en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 				ja: ['\u65e5', '\u6708', '\u706b', '\u6c34', '\u6728', '\u91d1', '\u571f']
@@ -132,7 +132,7 @@ Calendar.prototype = {
 		var week = [];
 		var weekName = this.option.week[this.option.lang] || this.option.week;
 		for (var i = 0, w; w = weekName[i]; i++) {
-			week[week.length] = '<th class="'+ __weekName[i] +'">'+ w +'</td>';
+			week[week.length] = '<th class="'+ _weekName[i] +'">'+ w +'</td>';
 		}
 		this.thead = $('<thead/>').append(this.tr.clone().html(week.join('')))
 		// tbody
@@ -159,7 +159,7 @@ Calendar.prototype = {
 	},
 
 	buildTodayLink: function() {
-		var date = this.getKey(__today).split('-');
+		var date = this.getKey(_today).split('-');
 		var linkText = typeof this.option.todayLink === 'object'
 			? this.option.todayLink[this.option.lang] : this.option.todayLink;
 		var self = this;
@@ -174,8 +174,8 @@ Calendar.prototype = {
 					)
 					.attr('href', 'javascript:void(0)')
 					.click(function() {
-						self.option.year  = __today.getFullYear();
-						self.option.month = __today.getMonth() + 1;
+						self.option.year  = _today.getFullYear();
+						self.option.month = _today.getMonth() + 1;
 						self.rebuild().show().resetWrap();
 					})
 			)
@@ -235,7 +235,7 @@ Calendar.prototype = {
 		        : this.getKey(date);
 		this.view[key] = this.td.clone()
 			.addClass(className)
-			.addClass(__weekName[date.getDay()]);
+			.addClass(_weekName[date.getDay()]);
 		// White space for (IE <= 7) "empty-cells" fix
 		this.view[key].text(hide ? ' ' : date.getDate());
 		if (key !== 'otherMonth') {
@@ -271,7 +271,7 @@ Calendar.prototype = {
 	},
 
 	show: function() {
-		var today = this.getKey(__today), tr, count = 0, self = this;
+		var today = this.getKey(_today), tr, count = 0, self = this;
 		$.each(self.view, function(key) {
 			if (count % 7 === 0 || count === 0) {
 				tr = count % 2 === 0
