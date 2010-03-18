@@ -19,7 +19,7 @@ var _today = new Date;
 
 function Calendar() {}
 
-Calendar.prototype = {
+Calendar.prototype = $.extend({
 	init: function(elem, option) {
 		this.setOption(option);
 		this.elem = $('<div/>')
@@ -378,6 +378,7 @@ Calendar.prototype = {
 			}
 		} catch(e) {}
 	}
-};
+
+}, Calendar.prototype);
 
 })(jQuery);
