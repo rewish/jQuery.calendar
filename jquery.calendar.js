@@ -24,15 +24,13 @@ Calendar.prototype = $.extend({
 		this.setOption(option);
 		this.elem = $('<div/>')
 			.addClass(this.option.cssClass)
-			.css('z-index', 2)
-		;
+			.css('z-index', 2);
 		this.wrap = $('<div/>')
 			.append(this.elem)
 			.css({
 				position: 'relative',
 				overflow: 'hidden'
-			})
-		;
+			});
 		elem.append(this.wrap);
 		this.view = {};
 		this.preloadEvents = {};
