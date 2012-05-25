@@ -130,7 +130,7 @@ Calendar.prototype = $.extend({
 		var week = [];
 		var weekName = this.option.week[this.option.lang] || this.option.week;
 		for (var i = 0, w; w = weekName[i]; i++) {
-			week[week.length] = '<th class="'+ _weekName[i] +'">'+ w +'</td>';
+			week[week.length] = '<th class="'+ _weekName[i] +'">'+ w +'</th>';
 		}
 		this.thead = $('<thead/>').append(this.tr.clone().html(week.join('')))
 		// tbody
