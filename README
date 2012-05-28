@@ -1,4 +1,0 @@
-Example:
-jQuery(document).ready(function($) {
-	$(expr).calendar();
-});
